@@ -2,9 +2,18 @@
 body {
     font-family: 'Satisfy', cursive;
     color: #458a45;
+    background-color: black;
 }
 
-button {
+h1 {
+    font-size: 56pt;
+}
+
+/* Divs */
+#main-menu {
+    display: none;
+}
+#main-menu button {
     font-family: 'Satisfy', cursive;
     font-size: 48pt;
     padding: 15px;
@@ -17,19 +26,15 @@ button {
 
     width: 200px;
 }
-button:hover {
+#main-menu button:hover {
     background-color: #458a45;
 }
-button:disabled {
+#main-menu button:disabled {
     opacity: 0.7;
 }
-
-h1 {
-    font-size: 56pt;
-}
-
-/* Divs */
 #blurback {
+    background-color: white;
+
     position: absolute;
     top: 0;
     left: 0;
@@ -47,9 +52,71 @@ h1 {
     z-index: -1;
 }
 
+#cafe {
+    background-color: white;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    background-image: url(Assets/Backgrounds/Background.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    
+    display: flex;
+}
+#counter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    background-image: url(Assets/Props/Counter.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+#options {
+    z-index: 2;
+    text-align: center;
+
+    width: 70vw;
+    max-height: 50%;
+    
+    display: flex;
+    justify-content: center;
+    gap: 5%;
+
+    position: absolute;
+    bottom: clamp(10vh, 18%, 20vh);
+}
+#options button {
+    position: relative;
+    font-family: 'Satisfy', cursive;
+    border: none;
+    padding: 0.5vw;
+    background-color: rgb(243, 180, 63);
+    color: white;
+    border-radius: 5px;
+    font-size: clamp(20%, 5vh, 200%);
+    width: 10vw;
+}
+#options button:hover {
+    background-color: rgb(229, 193, 88);
+}
+
 /* Classes */
 .content {
     position: relative;
     z-index: 1;
     text-align: center;
 }
+.hidden {
+    display: none;
+}
+
+/* Content */

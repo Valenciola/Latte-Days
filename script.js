@@ -12,22 +12,23 @@ document.getElementById("newgame").addEventListener("click", function() {
 });
 
 // Cafe UI
-let options = document.getElementById("options");
-let startchat = document.getElementById("chat");
-let startpos = document.getElementById("order");
-let todelivery = document.getElementById("todeliver");
-let tobarista = document.getElementById("todrink");
+let options = document.getElementById("options"); // Overarching options div
+let startchat = document.getElementById("chat"); // Chat button
+let startpos = document.getElementById("order"); // Order button
+let todelivery = document.getElementById("todeliver"); // Left
+let tobarista = document.getElementById("todrink"); // Right
 
 // Chat
 let chatbox = document.getElementById("dialogue");
 
-let tutorialconvo = [
+let tutorialconvo = [ // The tutorial chat convo placeholder
     ["Chima", "Pleasure to see you! I'm quite glad that I get to train you today. My name's Chima!"],
     [playername, "I'm excited to be here."],
     ["Chima", "Let's get started, shall we?"]
 ];
 
 function dialogue(lines, element, button) {
+    // All logic handling the dialogue chat feature
     let line = 0;
     let i = 0; // Initialize character index
     const interval = 35; // Wait time
@@ -52,7 +53,6 @@ function dialogue(lines, element, button) {
     }
 
     function displayText() {
-        //console.log("Does this run every time?");
         if (line < lines.length) {
             document.getElementById("custoname").textContent = lines[line][0];
             if (lines[line][0] == playername) {
@@ -85,8 +85,10 @@ function dialogue(lines, element, button) {
 }
 
 startchat.addEventListener("click", function() {
+    // Upon click, initiate chat
     chatbox.style.display = "flex";
     options.style.display = "none";
+    // Edit lines here depending on the character and other factors. RETURN to this later.
     dialogue(tutorialconvo, document.getElementById("text"), document.getElementById("textprogress"));
 });
 

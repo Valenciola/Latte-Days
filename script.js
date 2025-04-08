@@ -1,15 +1,16 @@
 // Overarching
-let playername = "Pamela";
+let playername = "Pamela"; // RETURN to this and change to base on main menu selection
 const optionData = {
     "Bases": ["Latte", "Tea", "Espresso", "Americano"],
-    "Flavorings": ["Original", "Matcha", "Chai", "Mocha", "Vanilla", "Caramel", "Mint", "Chocolate"],
-    "AddIns": ["Cream", "Ice", "Boba", "Milk", "Skim Milk", "Soy Milk", "Oat Milk", "Sugar"],
+    "Flavorings": ["Original", "Matcha", "Chai", "Mocha", "Vanilla"],
+    "AddIns": ["Cream", "Ice", "Boba", "Milk", "Oat Milk", "Sugar"],
     "Toppings": ["Cold Foam", "Chocolate Sauce", "Whipped Cream", "Shaved Chocolate"]
 }
-let customername = "Chima";
+let customername = "Chima"; // RETURN to this and change to base on code running
 let posflag = false;
 let opentickets = [];
 let currentcustomers = [];
+let drinks = [null, null, null];
 
 // Classes
 class Ticket {
@@ -19,6 +20,15 @@ class Ticket {
         this.flavoring = flavoring || "Original";
         this.addIns = addIns || [];
         this.toppings = toppings || [];
+    }
+}
+class Drink {
+    constructor(base, flavoring, addIns = [], toppings = [], desc = "?") {
+        this.base = base || "Latte";
+        this.flavoring = flavoring || "Original";
+        this.addIns = addIns || [];
+        this.toppings = toppings || [];
+        this.desc = desc || "Regular Latte";
     }
 }
 
@@ -64,7 +74,8 @@ function dialogue(lines, element, button) {
             setTimeout(addCharacter, interval);
         }
         else {
-            if (line == lines.length - 1) {
+            // Line is complete
+            if (line == lines.length - 1) { // If/else toggle between check and arrow for aesthetics and whatnot
                 button.textContent = "✓";
             }
             else {
@@ -92,6 +103,7 @@ function dialogue(lines, element, button) {
             options.style.display = "flex";
 
             if (posflag) {
+                // Handle creating a ticket here
                 document.getElementById("pos").style.display = "none";
                 posflag = false;
                 setTicket();
@@ -217,8 +229,13 @@ let updateChange = function(category, value, isChecked) {
 }
 
 let writeUp = function() {
+    // Update the ticket
     let ticket = document.getElementById("ticketsummary");
     ticket.innerHTML = "";
+
+    let namecard = document.createElement("li");
+    namecard.textContent = `Name: ${customername}`;
+    ticket.appendChild(namecard);
 
     Object.keys(Selections).forEach(category => {
         if (Array.isArray(Selections[category])) {
@@ -253,7 +270,24 @@ startpos.addEventListener("click", function() {
     dialogue(order, document.getElementById("text"), document.getElementById("textprogress"));
 });
 
-
 // Shift Barista
+let backtocaf = document.getElementById("backbar");
+let createdrink = document.getElementById("newdrink");
+
+tobarista.addEventListener("click", function() {
+    // Switch to the Barista Station
+    document.getElementById("cafe").style.display = 'none';
+    document.getElementById("barista").style.display = 'flex';
+});
+
+backtocaf.addEventListener("click", function() {
+    // Switch back to the Cafe
+    document.getElementById("cafe").style.display = 'flex';
+    document.getElementById("barista").style.display = 'none';
+});
+
+createdrink.addEventListener("click", function() {
+    console.log("Here's to new drinks!");
+});
 
 // Shift Delivery

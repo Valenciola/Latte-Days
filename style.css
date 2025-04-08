@@ -52,7 +52,7 @@ h1 {
     z-index: -1;
 }
 
-/* Cafe Gameplay */
+/* Front Counter Cafe Gameplay */
 #cafe {
     background-color: white;
 
@@ -94,20 +94,6 @@ h1 {
 
     position: absolute;
     bottom: clamp(10vh, 18%, 20vh);
-}
-#options button {
-    position: relative;
-    font-family: 'Satisfy', cursive;
-    border: none;
-    padding: 0.5vw;
-    background-color: rgb(243, 180, 63);
-    color: white;
-    border-radius: 5px;
-    font-size: clamp(20%, 5vh, 200%);
-    width: 10vw;
-}
-#options button:hover {
-    background-color: rgb(229, 193, 88);
 }
 
 /* Dialogue Box Styling */
@@ -289,6 +275,38 @@ h1 {
     width: auto;
 }
 
+/* Barista Station */
+#barista {
+    background-color: white;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    background-image: url(Assets/Backgrounds/Barista-Background.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    
+    display: none;
+}
+#barcounter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    background-image: url(Assets/Props/Counter-Barista.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+#baroptions {
+    gap: 30%;
+}
 
 /* Classes */
 .content {
@@ -296,6 +314,37 @@ h1 {
     z-index: 2;
     text-align: center;
 }
+
 .hidden {
     display: none;
+}
+
+.uiopts {
+    position: relative;
+    font-family: 'Satisfy', cursive;
+    border: none;
+    padding: 0.5vw;
+    background-color: rgb(243, 180, 63);
+    color: white;
+    border-radius: 5px;
+    font-size: clamp(20%, 5vh, 200%);
+    width: 10vw;
+}
+.uiopts:hover {
+    background-color: rgb(229, 193, 88);
+}
+
+.tocounter {
+    z-index: 2;
+    text-align: center;
+
+    width: 70vw;
+    max-height: 50%;
+    
+    display: flex;
+    justify-content: center;
+    gap: 5%;
+
+    position: absolute;
+    bottom: clamp(10vh, 18%, 20vh);
 }

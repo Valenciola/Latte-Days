@@ -150,7 +150,7 @@ startchat.addEventListener("click", function() {
 });
 
 // Take Order
-let posoptions = document.getElementById("posoptions")
+let posoptions = document.getElementById("posoptions");
 let tobases = document.getElementById("posbases");
 let toflavorings = document.getElementById("posflavor");
 let toaddins = document.getElementById("posaddin");
@@ -163,12 +163,11 @@ const Selections = {
 };
 let order = [[customername, "I'll have a regular latte."]];
 
-let createForm = function(category) {
-    const formspace = document.getElementById("ticketselect");
+let createForm = function(category, formspace, select, options, pos) {
     formspace.innerHTML = '';
 
     formspace.style.display = "flex";
-    posoptions.style.display = "none";
+    options.style.display = "none";
 
     let formtitle = document.createElement("h3");
     formtitle.textContent = `Choose from ${category}`;
@@ -185,47 +184,57 @@ let createForm = function(category) {
 
         if (category === "AddIns" || category === "Toppings") {
             // For multi-choice categories, check if the option is in the array
-            input.checked = Selections[category].includes(option);
+            input.checked = select[category].includes(option);
         } else {
             // For single-choice categories, check if the value matches
-            input.checked = Selections[category] === option;
+            input.checked = select[category] === option;
         }
 
         // Attach an event listener to handle user selections
-        input.addEventListener("change", () => updateChange(category, option, input.checked));
+        input.addEventListener("change", () => updateChange(category, option, input.checked, select, pos));
 
         // Append the input and its label to the form container
         label.appendChild(input);
         label.appendChild(document.createTextNode(option));
         formspace.appendChild(label);
-        formspace.appendChild(document.createElement("br")); // Optional: Line break for better spacing
+        formspace.appendChild(document.createElement("br"));
     });
 
     const backButton = document.createElement("button");
     backButton.textContent = "Back";
     backButton.addEventListener("click", function() {
         formspace.style.display = "none";
-        posoptions.style.removeProperty("display");
+        if (pos) {
+            options.style.removeProperty("display");
+        }
+        else {
+            options.style.display = 'flex';
+        }
     });
     formspace.appendChild(backButton);
 }
 
-let updateChange = function(category, value, isChecked) {
+let updateChange = function(category, value, isChecked, selectTarget, pos) {
     if (category === "AddIns" || category === "Toppings") {
         // For checkboxes: Add or remove values in the array
         if (isChecked) {
-            Selections[category].push(value); // Add selection
+            selectTarget[category].push(value); // Add selection
         } else {
-            Selections[category] = Selections[category].filter(item => item !== value); // Remove selection
+            selectTarget[category] = selectTarget[category].filter(item => item !== value); // Remove selection
         }
     } else {
         // For radio buttons: Replace the existing selection
-        Selections[category] = value;
+        selectTarget[category] = value;
     }
 
-    console.log(Selections); // Debugging: See the updated selections in the console
+    console.log(selectTarget); // Debugging: See the updated selections in the console
 
-    writeUp();
+    if (pos) {
+        writeUp();
+    }
+    else {
+        buildDesc();
+    }
 }
 
 let writeUp = function() {
@@ -254,10 +263,10 @@ let writeUp = function() {
     });
 }
 
-tobases.addEventListener("click", () => createForm("Bases"));
-toflavorings.addEventListener("click", () => createForm("Flavorings"));
-toaddins.addEventListener("click", () => createForm("AddIns"));
-totoppings.addEventListener("click", () => createForm("Toppings"));
+tobases.addEventListener("click", () => createForm("Bases", document.getElementById("ticketselect"), Selections, posoptions, true));
+toflavorings.addEventListener("click", () => createForm("Flavorings", document.getElementById("ticketselect"), Selections, posoptions, true));
+toaddins.addEventListener("click", () => createForm("AddIns", document.getElementById("ticketselect"), Selections, posoptions, true));
+totoppings.addEventListener("click", () => createForm("Toppings", document.getElementById("ticketselect"), Selections, posoptions, true));
 
 startpos.addEventListener("click", function() {
     // Upon click, initiate chat
@@ -273,11 +282,70 @@ startpos.addEventListener("click", function() {
 // Shift Barista
 let backtocaf = document.getElementById("backbar");
 let createdrink = document.getElementById("newdrink");
+let baroptions = document.getElementById("baroptions");
+
+let callTickets = function() {
+    let viewtickets = document.getElementById("viewtickets");
+
+    let existingMessage = viewtickets.querySelector("p");
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+
+    if (opentickets.length == 0) {
+        // We got no tickets
+        let notickets = document.createElement("p");
+
+        // Put that message right in the center
+        viewtickets.style.display = "flex";
+        viewtickets.style.justifyContent = "center";
+        viewtickets.style.alignItems = "center";
+
+        notickets.textContent = "No open tickets.";
+        viewtickets.appendChild(notickets);
+    }
+    else {
+        // We got tickets
+        viewtickets.style.display = ""; // Clearing things
+        viewtickets.style.justifyContent = "";
+        viewtickets.style.alignItems = "";
+        viewtickets.innerHTML = "";
+
+        let orderhead = document.createElement("h2");
+        orderhead.textContent = `Order for ${customername}`;
+        viewtickets.appendChild(orderhead);
+
+        // Display from tickets
+        const firstTicket = opentickets[0];
+        const ticketDetails = document.createElement("ul");
+        Object.keys(firstTicket).forEach(key => {
+            if (Array.isArray(firstTicket[key]) && firstTicket[key].length > 0) {
+                // Toppinds, Add-Ins
+                const listItem = document.createElement("li");
+                listItem.textContent = `${firstTicket[key].join(", ")}`;
+                ticketDetails.appendChild(listItem);
+            } else if (!Array.isArray(firstTicket[key]) && firstTicket[key] && key != "customerName") {
+                // Base, Flavor
+                const listItem = document.createElement("li");
+                listItem.textContent = `${firstTicket[key]}`;
+                ticketDetails.appendChild(listItem);
+            }
+        });
+
+        viewtickets.appendChild(ticketDetails);
+    }
+}
 
 tobarista.addEventListener("click", function() {
     // Switch to the Barista Station
     document.getElementById("cafe").style.display = 'none';
     document.getElementById("barista").style.display = 'flex';
+    if (!(drinks.includes(null))) {
+        createdrink.disabled = true;
+    }
+    else {
+        createdrink.disabled = false;
+    }
 });
 
 backtocaf.addEventListener("click", function() {
@@ -286,8 +354,135 @@ backtocaf.addEventListener("click", function() {
     document.getElementById("barista").style.display = 'none';
 });
 
+// Open create drinks
 createdrink.addEventListener("click", function() {
-    console.log("Here's to new drinks!");
+    baroptions.style.display = 'none';
+    document.getElementById("drinkstation").style.display = 'flex';
+    callTickets();
+});
+
+// Make Drinks
+let boptions = document.getElementById("makedrink");
+let bbases = document.getElementById("barbases");
+let bflavorings = document.getElementById("barflavor");
+let baddins = document.getElementById("baraddin");
+let btoppings = document.getElementById("bartopping");
+let backbar = document.getElementById("closebar");
+const DrinkSelections = {
+    Bases: "Latte",
+    Flavorings: "Original", 
+    AddIns: [], 
+    Toppings: [],
+    Desc: "Regular Latte"
+};
+
+function buildDesc() {
+    // Create a description from the choices
+    let tempd = "";
+
+    if (DrinkSelections.AddIns.includes("Ice")) {
+        tempd = tempd + "Iced";
+    }
+
+    if (DrinkSelections.Flavorings == "Original") {
+        tempd = tempd + " Regular";
+    }
+    else {
+        tempd = tempd + ` ${DrinkSelections.Flavorings}`;
+    }
+
+    tempd = tempd + ` ${DrinkSelections.Bases}`;
+
+    let nonex = [] // Non-Excluded Add-Ins
+    for(i = 0; i < DrinkSelections.AddIns.length; i++) {
+        if (DrinkSelections.AddIns[i] != "Ice") {
+            nonex.push(DrinkSelections.AddIns[i]);
+        }
+    }
+    if (nonex.length != 0) {
+        tempd = tempd + " with";
+        if (nonex.length == 2) {
+            tempd = tempd + ` ${nonex[0]} and ${nonex[1]}`;
+        }
+        else if (nonex.length == 1) {
+            tempd = tempd + ` ${nonex[0]}`;
+        }
+        else {
+            for(i = 0; i < nonex.length; i++) {
+                if (i == nonex.length - 1) {
+                    tempd = tempd + ` and ${nonex[i]}`;
+                }
+                else {
+                    tempd = tempd + ` ${nonex[i]},`;
+                }
+            }
+        }
+    }
+
+    if (DrinkSelections.Toppings.length != 0) {
+        if (nonex.length != 0) {
+            tempd = tempd + " and";
+        }
+        tempd = tempd + " topped with";
+        if (DrinkSelections.Toppings.length == 2) {
+            tempd = tempd + ` ${DrinkSelections.Toppings[0]} and ${DrinkSelections.Toppings[1]}`;
+        }
+        else if (DrinkSelections.Toppings.length == 1) {
+            tempd = tempd + ` ${DrinkSelections.Toppings[0]}`;
+        }
+        else {
+            for(i = 0; i < DrinkSelections.Toppings.length; i++) {
+                if (i == DrinkSelections.Toppings.length - 1) {
+                    tempd = tempd + ` and ${DrinkSelections.Toppings[i]}`;
+                }
+                else {
+                    tempd = tempd + ` ${DrinkSelections.Toppings[i]},`;
+                }
+            }
+        }
+    }
+
+    DrinkSelections.Desc = tempd;
+    document.getElementById("drinkdesc").textContent = tempd;
+}
+
+function setDrink() {
+    const newDrink = new Drink(
+        DrinkSelections.Bases,
+        DrinkSelections.Flavorings,
+        DrinkSelections.AddIns,
+        DrinkSelections.Toppings,
+        DrinkSelections.Desc
+    );
+    drinks[drinks.indexOf(null)] = newDrink;
+
+    DrinkSelections.Bases = "Latte";
+    DrinkSelections.Flavorings = "Original";
+    DrinkSelections.AddIns = [];
+    DrinkSelections.Toppings = [];
+    DrinkSelections.Desc = "Regular Latte";
+}
+
+// Handle Barista Station Modal Buttons
+bbases.addEventListener("click", () => createForm("Bases", document.getElementById("custodrink"), DrinkSelections, boptions, false));
+bflavorings.addEventListener("click", () => createForm("Flavorings", document.getElementById("custodrink"), DrinkSelections, boptions, false));
+baddins.addEventListener("click", () => createForm("AddIns", document.getElementById("custodrink"), DrinkSelections, boptions, false));
+btoppings.addEventListener("click", () => createForm("Toppings", document.getElementById("custodrink"), DrinkSelections, boptions, false));
+backbar.addEventListener("click", function() {
+    baroptions.style.display = '';
+    document.getElementById("drinkstation").style.display = 'none';
+});
+document.getElementById("confirmdrink").addEventListener("click", function() {
+    setDrink();
+    if (!(drinks.includes(null))) {
+        createdrink.disabled = true;
+    }
+    else {
+        createdrink.disabled = false;
+    }
+    baroptions.style.display = '';
+    document.getElementById("drinkstation").style.display = 'none';
+    console.log(drinks);
 });
 
 // Shift Delivery

@@ -32,6 +32,7 @@ h1 {
 #main-menu button:disabled {
     opacity: 0.7;
 }
+
 #blurback {
     background-color: white;
 
@@ -69,6 +70,7 @@ h1 {
     
     display: flex;
 }
+
 #counter {
     position: absolute;
     top: 0;
@@ -81,6 +83,7 @@ h1 {
     background-repeat: no-repeat;
     background-position: center;
 }
+
 #options {
     z-index: 2;
     text-align: center;
@@ -111,6 +114,7 @@ h1 {
     display: none;
     flex-direction: column;
 }
+
 #custoname {
     background-color: purple;
     height: 25%;
@@ -123,6 +127,7 @@ h1 {
 
     font-size: clamp(16px, 2vw, 24px);
 }
+
 #text {
     background-color: pink;
     height:75%;
@@ -133,6 +138,7 @@ h1 {
 
     font-size: clamp(14px, 1.5vw, 20px);
 }
+
 #textprogress {
     position: absolute;
     display: flex;
@@ -201,6 +207,7 @@ h1 {
 #postopping {
     background-color: #59932B;
 }
+
 #ticket {
     flex: 1;
     display: flex;
@@ -238,6 +245,7 @@ h1 {
     left: 0;
     color: #2c194a;
 }
+
 #ticketselect {
     display: none;
     flex-direction: column;
@@ -292,6 +300,10 @@ h1 {
     
     display: none;
 }
+#newdrink:disabled {
+    opacity: 0.7;
+}
+
 #barcounter {
     position: absolute;
     top: 0;
@@ -304,8 +316,128 @@ h1 {
     background-repeat: no-repeat;
     background-position: center;
 }
+
 #baroptions {
     gap: 30%;
+}
+
+/* Drink Modal */
+#drinkstation {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    display: none; /* Flex default */
+
+    transform: translateX(-50%);
+    width: 70vw;
+    height: 80vh;
+    overflow-y: visible;
+
+    border: solid white 2px;
+    border-radius: 4px;
+    z-index: 3;
+
+    background-color: #5B1A00;
+}
+
+#makedrink {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex: 1;
+
+    padding: 2rem;
+    margin: 0.5rem;
+
+    background-color: #481500;
+}
+#makedrink button {
+    border: solid white 2px;
+    border-radius: 4px;
+
+    font-family: 'Satisfy', cursive;
+    font-size: clamp(20%, 5vh, 200%);
+
+    color: white;
+    background-color: goldenrod;
+}
+#makedrink button:hover {
+    filter: brightness(1.2);
+    transition: filter 0.2s ease;
+}
+#closebar {
+    background-color: #5B1A00 !important;
+}
+
+#custodrink {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+
+    padding: 1rem;
+    margin: 0.5rem;
+
+    border-radius: 8px;
+    background-color: white;
+    color: goldenrod;
+
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+#displaydrink {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    padding: 2rem;
+    margin: 0.5rem;
+
+    background-color: #481500;
+    color: goldenrod;
+    text-align: center;
+}
+#drinkdesc {
+    flex: 3;
+}
+#drinkprev {
+    flex: 6;
+}
+#confirmdrink {
+    flex: 1;
+
+    border: solid white 2px;
+    border-radius: 4px;
+
+    font-family: 'Satisfy', cursive;
+    font-size: clamp(20%, 5vh, 200%);
+
+    color: white;
+    background-color: #024621;
+}
+#confirmdrink:hover {
+    filter: brightness(1.2);
+    transition: filter 0.2s ease;
+}
+
+
+#viewtickets {
+    flex: 1;
+    overflow-y: auto;
+
+    padding: 2rem;
+    margin: 0.5rem;
+
+    background-color: white;
+    color: #2c194a;
+}
+#viewtickets p {
+    text-align: center;
+}
+#viewtickets h2 {
+    text-align: center;
 }
 
 /* Classes */

@@ -9,7 +9,8 @@ const optionData = {
 let customername = "Chima"; // RETURN to this and change to base on code running
 let posflag = false;
 let opentickets = [];
-let currentcustomers = [];
+let readycustomers = [];
+let waitingcustomers = [];
 let drinks = [null, null, null];
 
 // Classes
@@ -31,6 +32,26 @@ class Drink {
         this.desc = desc || "Regular Latte";
     }
 }
+
+class Order {
+    constructor(base, flavoring, addIns = [], toppings = []) {
+        this.base = base || "";
+        this.flavoring = flavoring || "";
+        this.addIns = addIns || [];
+        this.toppings = toppings || [];
+    }
+}
+
+class Customer {
+    constructor(name, order, actions = []) {
+        this.name = name || "?";
+        this.order = order || null;
+        this.actions = actions || [true, true];
+    }
+}
+
+// Big Data
+let Chima = new Customer("Chima", new Order("Latte", "Original"));
 
 // Main Menu
 document.getElementById("credits").addEventListener("click", function() {
@@ -284,9 +305,7 @@ let backtocaf = document.getElementById("backbar");
 let createdrink = document.getElementById("newdrink");
 let baroptions = document.getElementById("baroptions");
 
-let callTickets = function() {
-    let viewtickets = document.getElementById("viewtickets");
-
+let callTickets = function(viewtickets) {
     let existingMessage = viewtickets.querySelector("p");
     if (existingMessage) {
         existingMessage.remove();
@@ -358,7 +377,7 @@ backtocaf.addEventListener("click", function() {
 createdrink.addEventListener("click", function() {
     baroptions.style.display = 'none';
     document.getElementById("drinkstation").style.display = 'flex';
-    callTickets();
+    callTickets(document.getElementById("viewtickets"));
 });
 
 // Make Drinks
@@ -486,3 +505,62 @@ document.getElementById("confirmdrink").addEventListener("click", function() {
 });
 
 // Shift Delivery
+let backfromdel = document.getElementById("backdel");
+let deloptions = document.getElementById("deloptions");
+let startdelivery = document.getElementById("finorder");
+
+backfromdel.addEventListener("click", function() {
+    // Switch back to the Cafe
+    document.getElementById("cafe").style.display = 'flex';
+    document.getElementById("pickup").style.display = 'none';
+});
+todelivery.addEventListener("click", function() {
+    // Switch to the Delivery Station
+    document.getElementById("cafe").style.display = 'none';
+    document.getElementById("pickup").style.display = 'flex';
+});
+
+let callDrinks = function(viewdrinks) {
+    let existingMessage = viewdrinks.querySelector("p");
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+
+    if (drinks.every(drink => drink === null)) {
+        // We got no drinks
+        let nodrink = document.createElement("p");
+
+        viewdrinks.style.display = "flex";
+        viewdrinks.style.justifyContent = "center";
+        viewdrinks.style.alignItems = "center";
+
+        nodrink.textContent = "No available drinks.";
+        viewdrinks.appendChild(nodrink);
+    }
+    else {
+        // We got drinks
+        let drinkIndex = drinks.findIndex(drink => drink !== null);
+        let currentDrink = drinks[drinkIndex];
+        let drinkDetails = document.createElement("h3");
+        drinkDetails.innerHTML = currentDrink.desc;
+
+        //RETURN to this function and give functionality to images
+
+        viewdrinks.appendChild(drinkDetails);
+    }
+}
+
+// Delivery Station
+let backtodel = document.getElementById("nodel");
+
+startdelivery.addEventListener("click", function() {
+    deloptions.style.display = 'none';
+    document.getElementById("delivery").style.display = 'flex';
+    callTickets(document.getElementById("showtickets"));
+    callDrinks(document.getElementById("showdrinks"));
+});
+
+backtodel.addEventListener("click", function() {
+    deloptions.style.display = '';
+    document.getElementById("delivery").style.display = 'none';
+});

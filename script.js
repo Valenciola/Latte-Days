@@ -3,15 +3,24 @@ let playername = "Pamela"; // RETURN to this and change to base on main menu sel
 const optionData = {
     "Bases": ["Latte", "Tea", "Espresso", "Americano"],
     "Flavorings": ["Original", "Matcha", "Chai", "Mocha", "Vanilla"],
-    "AddIns": ["Cream", "Ice", "Boba", "Milk", "Oat Milk", "Sugar"],
+    "AddIns": ["Cream", "Ice", "Boba", "Milk", "Sugar"],
     "Toppings": ["Cold Foam", "Chocolate Sauce", "Whipped Cream", "Shaved Chocolate"]
 }
-let customername = "Chima"; // RETURN to this and change to base on code running
-let posflag = false;
-let opentickets = [];
-let readycustomers = [];
-let waitingcustomers = [];
-let drinks = [null, null, null];
+let tutorial = false;
+
+let posflag = false; // For dialogue engine w/ POS
+let callflag = false; // For dialogue engine w/Delivery
+let judgeflag = false; // Handle a judging part
+
+let customername = null; // RETURN to this and change to base on code running
+let readycustomers = []; // Queue customers at the front counter
+let waitingcustomers = []; // Customers waiting to be served
+let focuscustomer = null; // Current customer (call at delivery)
+
+let drinks = [null, null, null]; // Drinks (cap 3)
+let drinkindex = null; // Current drink
+let opentickets = []; // Pushed tickets
+let ticketindex = null; // Current ticket
 
 // Classes
 class Ticket {
@@ -43,15 +52,37 @@ class Order {
 }
 
 class Customer {
-    constructor(name, order, actions = []) {
+    constructor(name = "", order = Order, orderdesc = "", placed = "", chat, recieve = "", judgings = []) {
         this.name = name || "?";
         this.order = order || null;
-        this.actions = actions || [true, true];
+        this.orderdesc = orderdesc || "?";
+        this.placed = placed || "Thank you.";
+        this.chat = chat || true;
+        this.recieve = recieve || "That's for me.";
+        this.judgings = judgings || [ // Perfect, Good, Okay, BAD
+            "This is perfect! Thank you!", 
+            "Thank you very much.", 
+            "This looks okay... thanks.", 
+            "I didn't order this."
+        ];
     }
 }
 
 // Big Data
-let Chima = new Customer("Chima", new Order("Latte", "Original"));
+let Chima = new Customer(
+    "Chima", 
+    new Order("Latte", "Original"), 
+    "I'll have a regular latte.",
+    "Thanks!",
+    true, 
+    "All ready?",
+    [
+        "This is perfect! Thank you!", 
+        "Thank you very much.", 
+        "This looks okay... thanks.", 
+        "I didn't order this."
+    ]
+);
 
 // Main Menu
 document.getElementById("credits").addEventListener("click", function() {
@@ -70,14 +101,27 @@ let startpos = document.getElementById("order"); // Order button
 let todelivery = document.getElementById("todeliver"); // Left
 let tobarista = document.getElementById("todrink"); // Right
 
+function updateFront() {
+    if (readycustomers.length == 0) {
+        document.getElementById("customer").style.display = 'none';
+        startchat.disabled = true;
+        startpos.disabled = true;
+    }
+    else {
+        let currcust = readycustomers[0];
+        console.log("There's still someone!");
+
+        if (currcust.chat == true) {
+            startchat.disabled = false;
+        }
+        else {
+            startchat.disabled = true;
+        }
+    }
+}
+
 // Chat
 let chatbox = document.getElementById("dialogue");
-
-let tutorialconvo = [ // The tutorial chat convo placeholder
-    [customername, "Pleasure to see you! I'm quite glad that I get to train you today. My name's Chima!"],
-    [playername, "I'm excited to be here."],
-    [customername, "Let's get started, shall we?"]
-];
 
 function dialogue(lines, element, button) {
     // All logic handling the dialogue chat feature
@@ -129,6 +173,47 @@ function dialogue(lines, element, button) {
                 posflag = false;
                 setTicket();
                 console.log(opentickets);
+                document.getElementById("order").disabled = true;
+            }
+            else if (callflag) {
+                callflag = false;
+                document.getElementById("delcustomer").style.display = 'block';
+                document.getElementById("delcustomer").src = `Assets/Characters/${lines[1][0]}-Static.png`;
+                //console.log(`Assets/Characters/${lines[1][0]}-Static.png`);
+                let score = judgeDelivery(focuscustomer[0], focuscustomer[1], focuscustomer[2])
+                focuscustomer.push(score);
+                judgeflag = true;
+
+                let feedback = [[focuscustomer[2].name, null]];
+                let accuracy = (focuscustomer[3]/17) * 100;
+                if (accuracy == 100) {
+                    feedback[0][1] = focuscustomer[2].judgings[0];
+                }
+                else if (accuracy >= 80) {
+                    feedback[0][1] = focuscustomer[2].judgings[1];
+                } 
+                else if (accuracy >= 50) {
+                    feedback[0][1] = focuscustomer[2].judgings[2];
+                } 
+                else {
+                    feedback[0][1] = focuscustomer[2].judgings[3];
+                }
+                //console.log(feedback);
+
+                setTimeout(() => {
+                    chatbox.style.display = "flex";
+                    options.style.display = "none";
+                    dialogue(feedback, document.getElementById("text"), document.getElementById("textprogress"));
+                }, 100);
+            }
+            else if (judgeflag) {
+                judgeflag = false;
+                document.getElementById("delcustomer").style.display = 'none';
+                document.getElementById("deloptions").style.display = 'flex';
+            }
+            else if (!tutorial) {
+                readycustomers[0].chat = false;
+                document.getElementById("chat").disabled = true;
             }
         }
     }
@@ -149,7 +234,13 @@ function dialogue(lines, element, button) {
             Selections.AddIns, 
             Selections.Toppings
         );
+
         opentickets.push(newTicket);
+        if (ticketindex == null) {
+            ticketindex = 0;
+        }
+
+        waitingcustomers.push(readycustomers.shift()); // Shift Customers Over
 
         Selections.Bases = null;
         Selections.Flavorings = null;
@@ -182,7 +273,6 @@ const Selections = {
     AddIns: [], 
     Toppings: [] 
 };
-let order = [[customername, "I'll have a regular latte."]];
 
 let createForm = function(category, formspace, select, options, pos) {
     formspace.innerHTML = '';
@@ -359,6 +449,7 @@ tobarista.addEventListener("click", function() {
     // Switch to the Barista Station
     document.getElementById("cafe").style.display = 'none';
     document.getElementById("barista").style.display = 'flex';
+    updateFront();
     if (!(drinks.includes(null))) {
         createdrink.disabled = true;
     }
@@ -473,7 +564,11 @@ function setDrink() {
         DrinkSelections.Toppings,
         DrinkSelections.Desc
     );
+
     drinks[drinks.indexOf(null)] = newDrink;
+    if (drinkindex == null) {
+        drinkindex = 0;
+    }
 
     DrinkSelections.Bases = "Latte";
     DrinkSelections.Flavorings = "Original";
@@ -518,6 +613,7 @@ todelivery.addEventListener("click", function() {
     // Switch to the Delivery Station
     document.getElementById("cafe").style.display = 'none';
     document.getElementById("pickup").style.display = 'flex';
+    updateFront();
 });
 
 let callDrinks = function(viewdrinks) {
@@ -552,15 +648,109 @@ let callDrinks = function(viewdrinks) {
 
 // Delivery Station
 let backtodel = document.getElementById("nodel");
+let sendorder = document.getElementById("yesdel");
+
+function pairOrder(ticket, drink) {
+    console.log(ticket, drink);
+    document.getElementById("delivery").style.display = 'none';
+
+    let custoindex = waitingcustomers.findIndex(customer => customer.name === ticket.customerName);
+    drinks[drinkindex] = null;
+    let nonNullDrinks = drinks.filter(drink => drink !== null);
+    for (let i = 0; i < drinks.length; i++) {
+        drinks[i] = nonNullDrinks[i] || null;
+    }
+    let ticustomer = waitingcustomers[custoindex];
+    waitingcustomers.splice(custoindex, 1);
+    opentickets.splice(ticketindex, 1);
+    ticketindex = opentickets.length > 0 ? 0 : null;
+    drinkindex = drinks.findIndex(drink => drink !== null);
+
+    callTickets(document.getElementById("showtickets"));
+    callDrinks(document.getElementById("showdrinks"));
+
+    let confirmlines = [
+        [playername, `I've got a ${drink.desc} for ${ticustomer.name}!`],
+        [customername, ticustomer.recieve]
+    ]
+    callflag = true;
+    chatbox.style.display = "flex";
+    options.style.display = "none";
+    dialogue(confirmlines, document.getElementById("text"), document.getElementById("textprogress"));
+    return([ticket, drink, ticustomer]);
+}
+
+function judgeDelivery(ticket, drink, customer) {
+    let points = 0;
+    let comp = customer.order;
+    
+    // Drink to Order
+    if (drink.base === comp.base) {points += 2};
+    if (drink.flavoring === comp.flavoring) {points += 2};
+
+    if (drink.addIns.length === comp.addIns.length && drink.addIns.every(addIn => comp.addIns.includes(addIn))) {
+        points += 2;
+    }
+    else if (drink.addIns.some(addIn => comp.addIns.includes(addIn))) {
+        points += 1;
+    }
+
+    if (drink.toppings.length === comp.toppings.length && drink.toppings.every(topping => comp.toppings.includes(topping))) {
+        points += 2;
+    }
+    else if (drink.toppings.some(topping => comp.toppings.includes(topping))) {
+        points += 1;
+    }
+
+    // Order to Ticket
+    if (ticket.drinkBase === comp.base) {points += 2};
+    if (ticket.flavoring === comp.flavoring) {points += 2};
+
+    if (ticket.addIns.length === comp.addIns.length && ticket.addIns.every(addIn => comp.addIns.includes(addIn))) {
+        points += 1;
+    }
+
+    if (ticket.toppings.length === comp.toppings.length && ticket.toppings.every(topping => comp.toppings.includes(topping))) {
+        points += 1;
+    }
+
+    // Chat or No Chat
+    if (customer.chat) {
+        points += 3;
+    }
+
+    return points;
+}
 
 startdelivery.addEventListener("click", function() {
     deloptions.style.display = 'none';
     document.getElementById("delivery").style.display = 'flex';
     callTickets(document.getElementById("showtickets"));
     callDrinks(document.getElementById("showdrinks"));
+
+    if (opentickets.length == 0 || drinks.every(drink => drink === null)) {
+        sendorder.disabled = true;
+    }
+    else {
+        sendorder.disabled = false;
+    }
 });
 
 backtodel.addEventListener("click", function() {
     deloptions.style.display = '';
     document.getElementById("delivery").style.display = 'none';
 });
+
+sendorder.addEventListener("click", function() {
+    focuscustomer = pairOrder(opentickets[ticketindex], drinks[drinkindex]);
+});
+
+// Regular Run
+readycustomers.push(Chima);
+customername = readycustomers[0].name;
+let order = [[customername, readycustomers[0].orderdesc]];
+let tutorialconvo = [ // The tutorial chat convo placeholder
+    [customername, "Pleasure to see you! I'm quite glad that I get to train you today. My name's Chima!"],
+    [playername, "I'm excited to be here."],
+    [customername, "Let's get started, shall we?"]
+];

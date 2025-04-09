@@ -9,6 +9,10 @@ h1 {
     font-size: 56pt;
 }
 
+button:disabled {
+    opacity: 0.7;
+}
+
 /* Main Menu */
 #main-menu {
     display: none;
@@ -386,6 +390,13 @@ h1 {
     overflow-y: auto;
     max-height: 100%;
 }
+#custodrink button {
+    border-radius: 4px;
+    border: none;
+    font-family: 'Satisfy', cursive;
+    background-color: rgb(243, 180, 63);
+    color: white;
+}
 
 #displaydrink {
     flex: 1;
@@ -440,6 +451,10 @@ h1 {
 }
 
 /* Delivery Station */
+#delcustomer {
+    display: none;
+}
+
 #pickup {
     background-color: white;
 
@@ -530,6 +545,10 @@ h1 {
 #pair button:hover {
     filter: brightness(1.2);
     transition: filter 0.2s ease;
+}
+
+#yesdel:disabled {
+    opacity: 0.7;
 }
 
 #showtickets {

@@ -14,9 +14,6 @@ button:disabled {
 }
 
 /* Main Menu */
-#main-menu {
-    display: none;
-}
 #main-menu button {
     font-family: 'Satisfy', cursive;
     font-size: 48pt;
@@ -72,7 +69,7 @@ button:disabled {
     background-repeat: no-repeat;
     background-position: center;
     
-    display: flex;
+    display: none; /* Original Flex */
 }
 
 #counter {

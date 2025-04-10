@@ -1,5 +1,5 @@
 // Overarching
-let playername = "Pamela"; // RETURN to this and change to base on main menu selection
+let playername = "You"; // RETURN to this and change to base on main menu selection
 const optionData = {
     "Bases": ["Latte", "Tea", "Espresso", "Americano"],
     "Flavorings": ["Original", "Matcha", "Chai", "Mocha", "Vanilla"],
@@ -23,7 +23,7 @@ let ticketindex = null; // Current ticket
 
 let order = [[null, null]]; // Get the order
 
-let tutorial = false;
+let tutorial = true;
 let tutorialconvo = [
     [playername, "Good morning, Miss Chima. How are you today?"],
     ["Chima", "I'm doing well, thanks! How about you?"],
@@ -94,6 +94,36 @@ let Chima = new Customer(
     ]
 );
 
+let Shon = new Customer(
+    "Shon",
+    new Order("Americano", "Chai", ["Ice"]), 
+    "I'd like an iced chai Americano, please!",
+    "'Preciate it!",
+    true, 
+    "Oh, my drink is ready!",
+    [
+        "This is perfect! Thank you!", 
+        "Thank you very much.", 
+        "This looks okay... thanks.", 
+        "I didn't order this."
+    ]
+);
+
+let Devon = new Customer(
+    "Devon",
+    new Order("Tea", "Matcha", ["Milk"]), 
+    "I'll have a matcha tea with milk, please",
+    "Thank you.",
+    true, 
+    "I'm here.",
+    [
+        "This is perfect! Thank you!", 
+        "Thank you very much.", 
+        "This looks okay... thanks.", 
+        "I didn't order this."
+    ]
+);
+
 // Transition
 let blackscreen = document.getElementById("transition");
 function transition(speed, hold, source, destination) {
@@ -141,6 +171,7 @@ function updateFront() {
         else {
             let currcust = readycustomers[0];
             console.log("There's still someone!");
+            document.getElementById("customer").src = `Assets/Characters/${currcust.name}-Static.png`
     
             if (currcust.chat == true) {
                 startchat.disabled = false;
@@ -244,7 +275,7 @@ function dialogue(lines, element, button) {
                     feedback.push([playername, "Thank you!"]);
                     feedback.push(["Chima", "There's another customer here today. Why don't you take this one on your own?"]);
                     feedback.push([playername, "I'll do my best."]);
-                    feedback.push(["Chima", `Alright! See you later, ${playername}.`]);
+                    feedback.push(["Chima", `Alright! See you later.`]);
                     tutorial = false;
                 }
 
@@ -743,6 +774,8 @@ let callDrinks = function(viewdrinks) {
     }
     else {
         // We got drinks
+        viewdrinks.innerHTML = '';
+
         let drinkIndex = drinks.findIndex(drink => drink !== null);
         let currentDrink = drinks[drinkIndex];
         let drinkDetails = document.createElement("h3");
@@ -870,7 +903,7 @@ function Tutorial() {
 
     // Initial Conversation
     let convo = [
-        [customername, `Good morning, ${playername}!`],
+        [customername, `Good morning!`],
         [playername, "Good morning!"],
         [customername, "So, it's your first day! I'm excited to teach you."],
         [customername, "Let's jump right into it. I'll show you the ropes."],
@@ -890,3 +923,5 @@ function Tutorial() {
 }
 
 // Regular Run
+readycustomers.push(Chima);
+console.log(readycustomers[0]);

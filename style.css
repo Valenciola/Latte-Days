@@ -543,6 +543,10 @@ button:disabled {
     filter: brightness(1.2);
     transition: filter 0.2s ease;
 }
+#pair h2 {
+    text-align: center;
+    color: #645a9c;
+}
 
 #yesdel:disabled {
     opacity: 0.7;

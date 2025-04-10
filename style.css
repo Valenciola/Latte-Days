@@ -565,6 +565,20 @@ button:disabled {
     text-align: center;
 }
 
+/* Transitional Screen */
+#transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 6;
+}
+
 /* Classes */
 .content {
     position: relative;

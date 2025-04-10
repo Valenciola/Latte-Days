@@ -6,7 +6,6 @@ const optionData = {
     "AddIns": ["Cream", "Ice", "Boba", "Milk", "Sugar"],
     "Toppings": ["Cold Foam", "Chocolate Sauce", "Whipped Cream", "Shaved Chocolate"]
 }
-let tutorial = false;
 
 let posflag = false; // For dialogue engine w/ POS
 let callflag = false; // For dialogue engine w/Delivery
@@ -21,6 +20,17 @@ let drinks = [null, null, null]; // Drinks (cap 3)
 let drinkindex = null; // Current drink
 let opentickets = []; // Pushed tickets
 let ticketindex = null; // Current ticket
+
+let order = [[null, null]]; // Get the order
+
+let tutorial = true;
+let tutorialconvo = [
+    [playername, "Good morning, Miss Chima. How are you today?"],
+    ["Chima", "I'm doing well, thanks! How about you?"],
+    [playername, "I'm doing alright. A little nervous since it's my first day, but I'm excited to learn!"],
+    ["Chima", "I'm happy to hear that. Shall we continue, then?"]
+];
+let tcheckpoint = [true, true, true, true];
 
 // Classes
 class Ticket {
@@ -84,14 +94,34 @@ let Chima = new Customer(
     ]
 );
 
+// Transition
+let blackscreen = document.getElementById("transition");
+function transition(speed, hold, source, destination) {
+    blackscreen.style.transition = `opacity ${speed}s ease`;
+    blackscreen.style.opacity = "1";
+
+    setTimeout(() => {
+        blackscreen.style.opacity = "0";
+    }, hold + speed * 1000);
+
+    setTimeout(() => {
+        source.style.display = 'none';
+        destination.style.display = 'flex';
+    }, speed * 1000);
+}
+
 // Main Menu
 document.getElementById("credits").addEventListener("click", function() {
     alert("Not available yet!");
 });
 
-document.getElementById("newgame").addEventListener("click", function() {
-    document.getElementById("main-menu").style.display = 'none';
-    document.getElementById("cafe").style.display = 'flex';
+document.getElementById("newgame").addEventListener("click", function() { // Start new game
+    transition(0.5, 1, document.getElementById("main-menu"),  document.getElementById("cafe"));
+    setTimeout(function() {
+        if (tutorial) {
+            Tutorial();
+        }
+    }, 0.5 * 1000);
 });
 
 // Cafe UI
@@ -102,22 +132,24 @@ let todelivery = document.getElementById("todeliver"); // Left
 let tobarista = document.getElementById("todrink"); // Right
 
 function updateFront() {
-    if (readycustomers.length == 0) {
-        document.getElementById("customer").style.display = 'none';
-        startchat.disabled = true;
-        startpos.disabled = true;
-    }
-    else {
-        let currcust = readycustomers[0];
-        console.log("There's still someone!");
-
-        if (currcust.chat == true) {
-            startchat.disabled = false;
+    setTimeout(function() {
+        if (readycustomers.length == 0) {
+            document.getElementById("customer").style.display = 'none';
+            startchat.disabled = true;
+            startpos.disabled = true;
         }
         else {
-            startchat.disabled = true;
+            let currcust = readycustomers[0];
+            console.log("There's still someone!");
+    
+            if (currcust.chat == true) {
+                startchat.disabled = false;
+            }
+            else {
+                startchat.disabled = true;
+            }
         }
-    }
+    }, 0.5 * 1000);
 }
 
 // Chat
@@ -156,6 +188,9 @@ function dialogue(lines, element, button) {
             if (lines[line][0] == playername) {
                 document.getElementById("custoname").style.backgroundColor = "lightskyblue";
             }
+            else if (lines[line][0] == "Tip") {
+                document.getElementById("custoname").style.backgroundColor = "mediumturquoise";
+            }
             else {
                 document.getElementById("custoname").style.backgroundColor = "purple";
             }
@@ -174,11 +209,15 @@ function dialogue(lines, element, button) {
                 setTicket();
                 console.log(opentickets);
                 document.getElementById("order").disabled = true;
+                document.getElementById("chat").disabled = true;
             }
             else if (callflag) {
                 callflag = false;
-                document.getElementById("delcustomer").style.display = 'block';
-                document.getElementById("delcustomer").src = `Assets/Characters/${lines[1][0]}-Static.png`;
+                transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("pickup"));
+                setTimeout(function() {
+                    document.getElementById("delcustomer").style.display = 'block';
+                    document.getElementById("delcustomer").src = `Assets/Characters/${lines[1][0]}-Static.png`;
+                }, 0.5 * 1000);
                 //console.log(`Assets/Characters/${lines[1][0]}-Static.png`);
                 let score = judgeDelivery(focuscustomer[0], focuscustomer[1], focuscustomer[2])
                 focuscustomer.push(score);
@@ -198,22 +237,87 @@ function dialogue(lines, element, button) {
                 else {
                     feedback[0][1] = focuscustomer[2].judgings[3];
                 }
+
+                if (tutorial) {
+                    feedback.push(["Chima", "Anyway, that's about all you need to know to work here at Latte Days!"]);
+                    feedback.push(["Chima", "Please do your absolute best to satisfy the rest of the customers. I really believe you can do it!"]);
+                    feedback.push([playername, "Thank you!"]);
+                    feedback.push(["Chima", "There's another customer here today. Why don't you take this one on your own?"]);
+                    feedback.push([playername, "I'll do my best."]);
+                    feedback.push(["Chima", `Alright! See you later, ${playername}.`]);
+                    tutorial = false;
+                }
+
                 //console.log(feedback);
 
                 setTimeout(() => {
                     chatbox.style.display = "flex";
                     options.style.display = "none";
                     dialogue(feedback, document.getElementById("text"), document.getElementById("textprogress"));
-                }, 100);
+                }, 0.5 * 1000 + 500);
             }
             else if (judgeflag) {
                 judgeflag = false;
-                document.getElementById("delcustomer").style.display = 'none';
-                document.getElementById("deloptions").style.display = 'flex';
+                transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("pickup"));
+                setTimeout(function() {
+                    document.getElementById("delcustomer").style.display = 'none';
+                    document.getElementById("deloptions").style.display = 'flex';
+                }, 0.5 * 1000);
             }
             else if (!tutorial) {
                 readycustomers[0].chat = false;
                 document.getElementById("chat").disabled = true;
+            }
+
+            if(tutorial) {
+                if (tcheckpoint[0]) {
+                    console.log("check");
+                    tcheckpoint[0] = false;
+                }
+                else if (tcheckpoint[1]) {
+                    console.log("OH");
+                    tcheckpoint[1] = false;
+
+                    order = [[readycustomers[0].name, readycustomers[0].orderdesc]];
+                    let aboutpos = [
+                        ["Chima", "Thanks for the conversation! Now, let's go over using the POS."],
+                        ["Chima", "You'll use the POS to write tickets based on a customer's order. Use the buttons to put together the order they ask for!"],
+                        ["Chima", "If you don't select anything in the POS, it'll automatically write a ticket for a regular latte. However, it's better practice to write an accurate ticket."],
+                        ["Chima", "Why don't you try taking my order now?"],
+                        ["Tip", "Use the TAKE ORDER button to access the POS."]
+                    ];
+                    document.getElementById("order").style.backgroundColor = "pink";
+                    document.getElementById("chat").disabled = true;
+                    document.getElementById("order").disabled = false;
+                    setTimeout(function() {
+                        chatbox.style.display = "flex";
+                        options.style.display = "none";
+                        dialogue(aboutpos, document.getElementById("text"), document.getElementById("textprogress"));
+                    }, 1);
+                }
+                else if (tcheckpoint[2]) {
+                    console.log("BRUH");
+                    tcheckpoint[2] = false;
+                }
+                else if (tcheckpoint[3]) {
+                    tcheckpoint[3] = false
+                    startpos.style.backgroundColor = "rgb(243, 180, 63)";
+                    document.getElementById("todeliver").disabled = false;
+                    document.getElementById("todrink").disabled = false;
+
+                    let sum = [
+                        ["Chima", "Good! Now, head over to the drink station to your right. Follow the directions on the machine to create the drink on the ticket you just wrote."],
+                        ["Chima", "After you're done, the delivery station will be all the way to your left. Call me over with the ticket you wrote and we'll see how well you did!"],
+                        [playername, "Understood! I'll get right to it!"],
+                        ["Tip", "Use the RIGHT ARROW to get to the drink machine and make a new drink. Then, click the LEFT ARROW to go back to the counter, and then press the LEFT ARROW again to go to the delivery station."],
+                        ["Tip", "Pair a ticket with a drink to submit an order."]
+                    ];
+                    setTimeout(function() {
+                        chatbox.style.display = "flex";
+                        options.style.display = "none";
+                        dialogue(sum, document.getElementById("text"), document.getElementById("textprogress"));
+                    }, 1);
+                }
             }
         }
     }
@@ -257,8 +361,10 @@ startchat.addEventListener("click", function() {
     // Upon click, initiate chat
     chatbox.style.display = "flex";
     options.style.display = "none";
-    // Edit lines here depending on the character and other factors. RETURN to this later.
-    dialogue(tutorialconvo, document.getElementById("text"), document.getElementById("textprogress"));
+    if (tutorial) {
+        dialogue(tutorialconvo, document.getElementById("text"), document.getElementById("textprogress"));
+        startchat.style.backgroundColor = "rgb(243, 180, 63)";
+    }
 });
 
 // Take Order
@@ -447,8 +553,7 @@ let callTickets = function(viewtickets) {
 
 tobarista.addEventListener("click", function() {
     // Switch to the Barista Station
-    document.getElementById("cafe").style.display = 'none';
-    document.getElementById("barista").style.display = 'flex';
+    transition(0.5, 1, document.getElementById("cafe"),  document.getElementById("barista"));
     updateFront();
     if (!(drinks.includes(null))) {
         createdrink.disabled = true;
@@ -460,8 +565,7 @@ tobarista.addEventListener("click", function() {
 
 backtocaf.addEventListener("click", function() {
     // Switch back to the Cafe
-    document.getElementById("cafe").style.display = 'flex';
-    document.getElementById("barista").style.display = 'none';
+    transition(0.5, 1, document.getElementById("barista"),  document.getElementById("cafe"));
 });
 
 // Open create drinks
@@ -606,13 +710,11 @@ let startdelivery = document.getElementById("finorder");
 
 backfromdel.addEventListener("click", function() {
     // Switch back to the Cafe
-    document.getElementById("cafe").style.display = 'flex';
-    document.getElementById("pickup").style.display = 'none';
+    transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("cafe"));
 });
 todelivery.addEventListener("click", function() {
     // Switch to the Delivery Station
-    document.getElementById("cafe").style.display = 'none';
-    document.getElementById("pickup").style.display = 'flex';
+    transition(0.5, 1, document.getElementById("cafe"),  document.getElementById("pickup"));
     updateFront();
 });
 
@@ -745,12 +847,33 @@ sendorder.addEventListener("click", function() {
     focuscustomer = pairOrder(opentickets[ticketindex], drinks[drinkindex]);
 });
 
+// Tutorial
+function Tutorial() {
+    // Set it up!
+    console.log("Go ahead!");
+    readycustomers.push(Chima);
+    customername = readycustomers[0].name;
+    options.style.display = 'none';
+
+    // Initial Conversation
+    let convo = [
+        [customername, `Good morning, ${playername}!`],
+        [playername, "Good morning!"],
+        [customername, "So, it's your first day! I'm excited to teach you."],
+        [customername, "Let's jump right into it. I'll show you the ropes."],
+        [playername, "I'm ready!"],
+        [customername, "Great! First things first, let's start with what to do when meeting others."],
+        [customername, "It's important to engage with customers before taking their order. Don't be shy and try to strike up a conversation!"],
+        [customername, "Sometimes, that can be the difference between a good and bad experience."],
+        ["Tip", "Use the CHAT button to have a conversation with a customer."]
+    ];
+    chatbox.style.display = "flex";
+    dialogue(convo, document.getElementById("text"), document.getElementById("textprogress"));
+    document.getElementById("chat").style.backgroundColor = "pink";
+
+    document.getElementById("order").disabled = true;
+    document.getElementById("todeliver").disabled = true;
+    document.getElementById("todrink").disabled = true;
+}
+
 // Regular Run
-readycustomers.push(Chima);
-customername = readycustomers[0].name;
-let order = [[customername, readycustomers[0].orderdesc]];
-let tutorialconvo = [ // The tutorial chat convo placeholder
-    [customername, "Pleasure to see you! I'm quite glad that I get to train you today. My name's Chima!"],
-    [playername, "I'm excited to be here."],
-    [customername, "Let's get started, shall we?"]
-];

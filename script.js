@@ -162,6 +162,9 @@ let todelivery = document.getElementById("todeliver"); // Left
 let tobarista = document.getElementById("todrink"); // Right
 
 function updateFront() {
+    if (tutorial) {
+        startchat.disabled = true;
+    }
     setTimeout(function() {
         if (readycustomers.length == 0) {
             document.getElementById("customer").style.display = 'none';
@@ -273,7 +276,7 @@ function dialogue(lines, element, button) {
                     feedback.push(["Chima", "Anyway, that's about all you need to know to work here at Latte Days!"]);
                     feedback.push(["Chima", "Please do your absolute best to satisfy the rest of the customers. I really believe you can do it!"]);
                     feedback.push([playername, "Thank you!"]);
-                    feedback.push(["Chima", "There's another customer here today. Why don't you take this one on your own?"]);
+                    feedback.push(["Chima", "I'll be heading out now, okay? You've got the customers for these next few days!"]);
                     feedback.push([playername, "I'll do my best."]);
                     feedback.push(["Chima", `Alright! See you later.`]);
                     tutorial = false;
@@ -293,6 +296,10 @@ function dialogue(lines, element, button) {
                 setTimeout(function() {
                     document.getElementById("delcustomer").style.display = 'none';
                     document.getElementById("deloptions").style.display = 'flex';
+                    if (!tutorial && tcheckpoint.includes(1)) {
+                        document.getElementById("fence").style.display = 'flex';
+                        document.getElementById("fence").style.opacity = "1";
+                    }
                 }, 0.5 * 1000);
             }
             else if (!tutorial) {
@@ -790,6 +797,7 @@ let callDrinks = function(viewdrinks) {
         }
 
         viewdrinks.appendChild(drinkDetails);
+        viewdrinks.appendChild(document.createElement("br"));
         viewdrinks.appendChild(drinkview);
     }
 }

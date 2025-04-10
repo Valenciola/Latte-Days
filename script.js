@@ -162,9 +162,6 @@ let todelivery = document.getElementById("todeliver"); // Left
 let tobarista = document.getElementById("todrink"); // Right
 
 function updateFront() {
-    if (tutorial) {
-        startchat.disabled = true;
-    }
     setTimeout(function() {
         if (readycustomers.length == 0) {
             document.getElementById("customer").style.display = 'none';
@@ -180,6 +177,10 @@ function updateFront() {
                 startchat.disabled = false;
             }
             else {
+                startchat.disabled = true;
+            }
+            
+            if (tutorial) {
                 startchat.disabled = true;
             }
         }
@@ -296,7 +297,7 @@ function dialogue(lines, element, button) {
                 setTimeout(function() {
                     document.getElementById("delcustomer").style.display = 'none';
                     document.getElementById("deloptions").style.display = 'flex';
-                    if (!tutorial && tcheckpoint.includes(1)) {
+                    if (!tutorial && tcheckpoint.includes(false)) {
                         document.getElementById("fence").style.display = 'flex';
                         document.getElementById("fence").style.opacity = "1";
                     }

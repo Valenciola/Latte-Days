@@ -1,2 +1,2 @@
 # Latte Days
-Something a little too ambitious for 48 hours
+The start of a little cafe story game. **More to come!**

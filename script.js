@@ -23,7 +23,7 @@ let ticketindex = null; // Current ticket
 
 let order = [[null, null]]; // Get the order
 
-let tutorial = true;
+let tutorial = false;
 let tutorialconvo = [
     [playername, "Good morning, Miss Chima. How are you today?"],
     ["Chima", "I'm doing well, thanks! How about you?"],
@@ -451,6 +451,12 @@ let updateChange = function(category, value, isChecked, selectTarget, pos) {
     }
     else {
         buildDesc();
+        if (DrinkSelections.Flavorings == "Original") {
+            document.getElementById("drinkpreview").src = `Assets/Drinks/${DrinkSelections.Bases}.png`;
+        }
+        else {
+            document.getElementById("drinkpreview").src = `Assets/Drinks/${DrinkSelections.Bases}-${DrinkSelections.Flavorings}.png`;
+        }
     }
 }
 
@@ -742,9 +748,16 @@ let callDrinks = function(viewdrinks) {
         let drinkDetails = document.createElement("h3");
         drinkDetails.innerHTML = currentDrink.desc;
 
-        //RETURN to this function and give functionality to images
+        let drinkview = document.createElement("img");
+        if (currentDrink.flavoring == "Original") {
+            drinkview.src = `Assets/Drinks/${currentDrink.base}.png`;
+        }
+        else {
+            drinkview.src = `Assets/Drinks/${currentDrink.base}-${currentDrink.flavoring}.png`;
+        }
 
         viewdrinks.appendChild(drinkDetails);
+        viewdrinks.appendChild(drinkview);
     }
 }
 

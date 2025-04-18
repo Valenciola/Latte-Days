@@ -483,7 +483,7 @@ let updateChange = function(category, value, isChecked, selectTarget, pos) {
         selectTarget[category] = value;
     }
 
-    console.log(selectTarget); // Debugging: See the updated selections in the console
+    //console.log(selectTarget); // Check the update
 
     if (pos) {
         writeUp();

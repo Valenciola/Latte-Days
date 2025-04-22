@@ -62,6 +62,11 @@ document.getElementById("newgame").addEventListener("click", function() { // Sta
         if (tutorial) {
             Tutorial();
         }
+        else {
+            // Regular Run
+            readycustomers.push(canbeserved[0]);
+        }
+        console.log(readycustomers[0]);
     }, 0.5 * 1000);
 });
 
@@ -101,8 +106,10 @@ function updateFront() {
 // Chat
 let chatbox = document.getElementById("dialogue");
 
-function dialogue(lines, element, button) {
+function dialogue(lines) {
     // All logic handling the dialogue chat feature
+    let button = document.getElementById("textprogress");
+    let element = document.getElementById("text");
 
     let line = 0;
     let i = 0; // Initialize character index
@@ -148,8 +155,7 @@ function dialogue(lines, element, button) {
             chatbox.style.display = "none";
             options.style.display = "flex";
 
-            if (posflag) {
-                // Handle creating a ticket here
+            if (posflag) { // Handle creating a ticket here
                 document.getElementById("pos").style.display = "none";
                 posflag = false;
                 setTicket();
@@ -157,7 +163,7 @@ function dialogue(lines, element, button) {
                 document.getElementById("order").disabled = true;
                 document.getElementById("chat").disabled = true;
             }
-            else if (callflag) {
+            else if (callflag) { // Handle having called a customer over for a delivery
                 callflag = false;
                 transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("pickup"));
                 setTimeout(function() {
@@ -187,6 +193,7 @@ function dialogue(lines, element, button) {
                 if (tutorial) {
                     feedback.push(["Chima", "Anyway, that's about all you need to know to work here at Latte Days!"]);
                     feedback.push(["Chima", "Please do your absolute best to satisfy the rest of the customers. I really believe you can do it!"]);
+                    //readycustomers.push(canbeserved[0]); // The "Try It On Your Own" customer
                     feedback.push([playername, "Thank you!"]);
                     feedback.push(["Chima", "I'll be heading out now, okay? You've got the customers for these next few days!"]);
                     feedback.push([playername, "I'll do my best."]);
@@ -199,12 +206,16 @@ function dialogue(lines, element, button) {
                 setTimeout(() => {
                     chatbox.style.display = "flex";
                     options.style.display = "none";
-                    dialogue(feedback, document.getElementById("text"), document.getElementById("textprogress"));
+                    dialogue(feedback);
                 }, 0.5 * 1000 + 500);
             }
-            else if (judgeflag) {
+            else if (judgeflag) { // Handle judging an order and ticket
                 judgeflag = false;
                 transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("pickup"));
+                console.log(waitingcustomers, readycustomers);
+                if (waitingcustomers.length == 0 && readycustomers.length == 0) {
+                    console.log("No more customers!");
+                }
                 setTimeout(function() {
                     document.getElementById("delcustomer").style.display = 'none';
                     document.getElementById("deloptions").style.display = 'flex';
@@ -214,18 +225,18 @@ function dialogue(lines, element, button) {
                     }
                 }, 0.5 * 1000);
             }
-            else if (!tutorial) {
+            else if (!tutorial) { // Regular handling for disabling chat button
                 readycustomers[0].chat = false;
                 document.getElementById("chat").disabled = true;
             }
 
-            if(tutorial) {
+            if(tutorial) { // Based on tutorial checkpoints do some other actions
                 if (tcheckpoint[0]) {
-                    console.log("check");
+                    console.log("To Chat");
                     tcheckpoint[0] = false;
                 }
                 else if (tcheckpoint[1]) {
-                    console.log("OH");
+                    console.log("To POS");
                     tcheckpoint[1] = false;
 
                     order = [[readycustomers[0].name, readycustomers[0].orderdesc]];
@@ -242,11 +253,11 @@ function dialogue(lines, element, button) {
                     setTimeout(function() {
                         chatbox.style.display = "flex";
                         options.style.display = "none";
-                        dialogue(aboutpos, document.getElementById("text"), document.getElementById("textprogress"));
+                        dialogue(aboutpos);
                     }, 1);
                 }
                 else if (tcheckpoint[2]) {
-                    console.log("BRUH");
+                    console.log("Make Drink");
                     tcheckpoint[2] = false;
                 }
                 else if (tcheckpoint[3]) {
@@ -265,7 +276,7 @@ function dialogue(lines, element, button) {
                     setTimeout(function() {
                         chatbox.style.display = "flex";
                         options.style.display = "none";
-                        dialogue(sum, document.getElementById("text"), document.getElementById("textprogress"));
+                        dialogue(sum);
                     }, 1);
                 }
             }
@@ -300,6 +311,8 @@ function dialogue(lines, element, button) {
         Selections.Flavorings = null;
         Selections.AddIns = [];
         Selections.Toppings = [];
+
+        console.log(readycustomers, waitingcustomers);
     }
 
     button.addEventListener('click', buttonHandle);
@@ -312,7 +325,7 @@ startchat.addEventListener("click", function() {
     chatbox.style.display = "flex";
     options.style.display = "none";
     if (tutorial) {
-        dialogue(tutorialconvo, document.getElementById("text"), document.getElementById("textprogress"));
+        dialogue(tutorialconvo);
         startchat.style.backgroundColor = "rgb(243, 180, 63)";
     }
 });
@@ -449,7 +462,9 @@ startpos.addEventListener("click", function() {
     chatbox.style.display = "flex";
     document.getElementById("ticketsummary").innerHTML = '';
     posflag = true;
-    dialogue(order, document.getElementById("text"), document.getElementById("textprogress"));
+    customername = readycustomers[0].name;
+    order = [[readycustomers[0].name, readycustomers[0].orderdesc]];
+    dialogue(order);
 });
 
 // Shift Barista
@@ -744,7 +759,7 @@ function pairOrder(ticket, drink) {
     callflag = true;
     chatbox.style.display = "flex";
     options.style.display = "none";
-    dialogue(confirmlines, document.getElementById("text"), document.getElementById("textprogress"));
+    dialogue(confirmlines);
     return([ticket, drink, ticustomer]);
 }
 
@@ -834,14 +849,10 @@ function Tutorial() {
         ["Tip", "Use the CHAT button to have a conversation with a customer."]
     ];
     chatbox.style.display = "flex";
-    dialogue(convo, document.getElementById("text"), document.getElementById("textprogress"));
+    dialogue(convo);
     document.getElementById("chat").style.backgroundColor = "pink";
 
     document.getElementById("order").disabled = true;
     document.getElementById("todeliver").disabled = true;
     document.getElementById("todrink").disabled = true;
 }
-
-// Regular Run
-readycustomers.push(canbeserved[0]);
-console.log(readycustomers[0]);

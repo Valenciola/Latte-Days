@@ -1,4 +1,7 @@
 // Overarching
+import { canbeserved } from "./customers.js";
+import { Ticket, Drink } from "./structures.js";
+
 let playername = "You"; // RETURN to this and change to base on main menu selection
 const optionData = {
     "Bases": ["Latte", "Tea", "Espresso", "Americano"],
@@ -31,98 +34,6 @@ let tutorialconvo = [
     ["Chima", "I'm happy to hear that. Shall we continue, then?"]
 ];
 let tcheckpoint = [true, true, true, true];
-
-// Classes
-class Ticket {
-    constructor(customerName, drinkBase, flavoring, addIns = [], toppings = []) {
-        this.customerName = customerName || "?";
-        this.drinkBase = drinkBase || "Latte";
-        this.flavoring = flavoring || "Original";
-        this.addIns = addIns || [];
-        this.toppings = toppings || [];
-    }
-}
-class Drink {
-    constructor(base, flavoring, addIns = [], toppings = [], desc = "?") {
-        this.base = base || "Latte";
-        this.flavoring = flavoring || "Original";
-        this.addIns = addIns || [];
-        this.toppings = toppings || [];
-        this.desc = desc || "Regular Latte";
-    }
-}
-
-class Order {
-    constructor(base, flavoring, addIns = [], toppings = []) {
-        this.base = base || "";
-        this.flavoring = flavoring || "";
-        this.addIns = addIns || [];
-        this.toppings = toppings || [];
-    }
-}
-
-class Customer {
-    constructor(name = "", order = Order, orderdesc = "", placed = "", chat, recieve = "", judgings = []) {
-        this.name = name || "?";
-        this.order = order || null;
-        this.orderdesc = orderdesc || "?";
-        this.placed = placed || "Thank you.";
-        this.chat = chat || true;
-        this.recieve = recieve || "That's for me.";
-        this.judgings = judgings || [ // Perfect, Good, Okay, BAD
-            "This is perfect! Thank you!", 
-            "Thank you very much.", 
-            "This looks okay... thanks.", 
-            "I didn't order this."
-        ];
-    }
-}
-
-// Big Data
-let Chima = new Customer(
-    "Chima", 
-    new Order("Latte", "Original"), 
-    "I'll have a regular latte.",
-    "Thanks!",
-    true, 
-    "All ready?",
-    [
-        "This is perfect! Thank you!", 
-        "Thank you very much.", 
-        "This looks okay... thanks.", 
-        "I didn't order this."
-    ]
-);
-
-let Shon = new Customer(
-    "Shon",
-    new Order("Americano", "Chai", ["Ice"]), 
-    "I'd like an iced chai Americano, please!",
-    "'Preciate it!",
-    true, 
-    "Oh, my drink is ready!",
-    [
-        "This is perfect! Thank you!", 
-        "Thank you very much.", 
-        "This looks okay... thanks.", 
-        "I didn't order this."
-    ]
-);
-
-let Devon = new Customer(
-    "Devon",
-    new Order("Tea", "Matcha", ["Milk"]), 
-    "I'll have a matcha tea with milk, please",
-    "Thank you.",
-    true, 
-    "I'm here.",
-    [
-        "This is perfect! Thank you!", 
-        "Thank you very much.", 
-        "This looks okay... thanks.", 
-        "I didn't order this."
-    ]
-);
 
 // Transition
 let blackscreen = document.getElementById("transition");
@@ -653,7 +564,7 @@ function buildDesc() {
     tempd = tempd + ` ${DrinkSelections.Bases}`;
 
     let nonex = [] // Non-Excluded Add-Ins
-    for(i = 0; i < DrinkSelections.AddIns.length; i++) {
+    for(let i = 0; i < DrinkSelections.AddIns.length; i++) {
         if (DrinkSelections.AddIns[i] != "Ice") {
             nonex.push(DrinkSelections.AddIns[i]);
         }
@@ -667,7 +578,7 @@ function buildDesc() {
             tempd = tempd + ` ${nonex[0]}`;
         }
         else {
-            for(i = 0; i < nonex.length; i++) {
+            for(let i = 0; i < nonex.length; i++) {
                 if (i == nonex.length - 1) {
                     tempd = tempd + ` and ${nonex[i]}`;
                 }
@@ -690,7 +601,7 @@ function buildDesc() {
             tempd = tempd + ` ${DrinkSelections.Toppings[0]}`;
         }
         else {
-            for(i = 0; i < DrinkSelections.Toppings.length; i++) {
+            for(let i = 0; i < DrinkSelections.Toppings.length; i++) {
                 if (i == DrinkSelections.Toppings.length - 1) {
                     tempd = tempd + ` and ${DrinkSelections.Toppings[i]}`;
                 }
@@ -906,7 +817,7 @@ sendorder.addEventListener("click", function() {
 function Tutorial() {
     // Set it up!
     console.log("Go ahead!");
-    readycustomers.push(Chima);
+    readycustomers.push(canbeserved[0]);
     customername = readycustomers[0].name;
     options.style.display = 'none';
 
@@ -932,5 +843,5 @@ function Tutorial() {
 }
 
 // Regular Run
-readycustomers.push(Chima);
+readycustomers.push(canbeserved[0]);
 console.log(readycustomers[0]);

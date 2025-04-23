@@ -3,8 +3,8 @@ import { Customer, Order } from "./structures.js";
 // Characters
 let Chima = new Customer(
     "Chima", 
-    new Order("Latte", "Original"), 
-    "I'll have a regular latte.",
+    new Order("Espresso", "Mocha", [], ["Cold Foam", "Chocolate Sauce"]), 
+    "I'd like a mocha espresso topped with cold foam and chocolate sauce, please!",
     "Thanks!",
     true, 
     "All ready?",
@@ -46,6 +46,6 @@ let Devon = new Customer(
     ]
 );
 
-let canbeserved = [Chima];
+let canbeserved = [Chima]; // Deal with this variable and make it update dynamically depending on everyone's first day
 
 export {canbeserved};

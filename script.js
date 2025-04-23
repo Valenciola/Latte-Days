@@ -1,6 +1,6 @@
 // Overarching
 import { canbeserved } from "./customers.js";
-import { Ticket, Drink } from "./structures.js";
+import { Ticket, Drink, Order } from "./structures.js";
 
 let playername = "You"; // RETURN to this and change to base on main menu selection
 const optionData = {
@@ -26,7 +26,7 @@ let ticketindex = null; // Current ticket
 
 let order = [[null, null]]; // Get the order
 
-let tutorial = true;
+let tutorial = false;
 let tutorialconvo = [
     [playername, "Good morning, Miss Chima. How are you today?"],
     ["Chima", "I'm doing well, thanks! How about you?"],
@@ -34,6 +34,8 @@ let tutorialconvo = [
     ["Chima", "I'm happy to hear that. Shall we continue, then?"]
 ];
 let tcheckpoint = [true, true, true, true];
+
+let days = 0;
 
 // Transition
 let blackscreen = document.getElementById("transition");
@@ -155,15 +157,7 @@ function dialogue(lines) {
             chatbox.style.display = "none";
             options.style.display = "flex";
 
-            if (posflag) { // Handle creating a ticket here
-                document.getElementById("pos").style.display = "none";
-                posflag = false;
-                setTicket();
-                console.log(opentickets);
-                document.getElementById("order").disabled = true;
-                document.getElementById("chat").disabled = true;
-            }
-            else if (callflag) { // Handle having called a customer over for a delivery
+            if (callflag) { // Handle having called a customer over for a delivery
                 callflag = false;
                 transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("pickup"));
                 setTimeout(function() {
@@ -225,10 +219,6 @@ function dialogue(lines) {
                     }
                 }, 0.5 * 1000);
             }
-            else if (!tutorial) { // Regular handling for disabling chat button
-                readycustomers[0].chat = false;
-                document.getElementById("chat").disabled = true;
-            }
 
             if(tutorial) { // Based on tutorial checkpoints do some other actions
                 if (tcheckpoint[0]) {
@@ -284,6 +274,15 @@ function dialogue(lines) {
     }
 
     function buttonHandle() {
+        if (posflag) { // Handle creating a ticket here
+            document.getElementById("pos").style.display = "none";
+            posflag = false;
+            setTicket();
+            console.log(opentickets);
+            document.getElementById("order").disabled = true;
+            document.getElementById("chat").disabled = true;
+        }
+
         button.style.display = "none";
         element.textContent = ''; // Clear previous line
         line++; // Move to the next line
@@ -304,6 +303,9 @@ function dialogue(lines) {
         if (ticketindex == null) {
             ticketindex = 0;
         }
+
+        readycustomers[0].chat = false;
+        document.getElementById("chat").disabled = true;
 
         waitingcustomers.push(readycustomers.shift()); // Shift Customers Over
 
@@ -463,7 +465,18 @@ startpos.addEventListener("click", function() {
     document.getElementById("ticketsummary").innerHTML = '';
     posflag = true;
     customername = readycustomers[0].name;
-    order = [[readycustomers[0].name, readycustomers[0].orderdesc]];
+    if (tutorial) {
+        order = [
+            ["Chima", "I'll have a regular latte."],
+            ["Chima", "Alright! Let's continue."]
+        ]
+    }
+    else {
+        order = [
+            [readycustomers[0].name, readycustomers[0].orderdesc],
+            [readycustomers[0].name, readycustomers[0].placed]
+        ];
+    }
     dialogue(order);
 });
 
@@ -766,7 +779,11 @@ function pairOrder(ticket, drink) {
 function judgeDelivery(ticket, drink, customer) {
     let points = 0;
     let comp = customer.order;
-    
+    if (tutorial) {
+        comp = new Order("Latte", "Original");
+    }
+    console.log(comp);
+
     // Drink to Order
     if (drink.base === comp.base) {points += 2};
     if (drink.flavoring === comp.flavoring) {points += 2};
@@ -798,7 +815,7 @@ function judgeDelivery(ticket, drink, customer) {
     }
 
     // Chat or No Chat
-    if (customer.chat) {
+    if (!customer.chat) {
         points += 3;
     }
 

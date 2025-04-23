@@ -27,7 +27,7 @@ class Order {
     }
 }
 
-class Customer {
+class Customer { // Add first visiting day, a special order, friendship level buffer (how fast you can be friends)
     constructor(name = "", order = Order, orderdesc = "", placed = "", chat, recieve = "", judgings = []) {
         this.name = name || "?";
         this.order = order || null;

@@ -557,6 +557,13 @@ createdrink.addEventListener("click", function() {
     baroptions.style.display = 'none';
     document.getElementById("drinkstation").style.display = 'flex';
     callTickets(document.getElementById("viewtickets"));
+    buildDesc();
+    if (DrinkSelections.Flavorings == "Original") {
+        document.getElementById("drinkpreview").src = `Assets/Drinks/${DrinkSelections.Bases}.png`;
+    }
+    else {
+        document.getElementById("drinkpreview").src = `Assets/Drinks/${DrinkSelections.Bases}-${DrinkSelections.Flavorings}.png`;
+    }
 });
 
 // Make Drinks

@@ -486,10 +486,7 @@ let createdrink = document.getElementById("newdrink");
 let baroptions = document.getElementById("baroptions");
 
 let callTickets = function(viewtickets) {
-    let existingMessage = viewtickets.querySelector("p");
-    if (existingMessage) {
-        existingMessage.remove();
-    }
+    viewtickets.innerHTML = "";
 
     if (opentickets.length == 0) {
         // We got no tickets
@@ -710,10 +707,7 @@ todelivery.addEventListener("click", function() {
 });
 
 let callDrinks = function(viewdrinks) {
-    let existingMessage = viewdrinks.querySelector("p");
-    if (existingMessage) {
-        existingMessage.remove();
-    }
+    viewdrinks.innerHTML = "";
 
     if (drinks.every(drink => drink === null)) {
         // We got no drinks

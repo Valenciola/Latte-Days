@@ -1,15 +1,20 @@
 import { Customer, Order, Interaction } from "./structures.js";
 
 /*
-class Customer { // Add first visiting day, a special order, friendship level buffer (how fast you can be friends)
-    constructor(name = "", order = Order, orderdesc = "", placed = "", chat, recieve = "", judgings = []) {
+class Customer { 
+    constructor(name = "", firstday, visits, order = Order, orderdesc = "", placed = "", chat = Boolean, recieve = "", judgings = []) {
         this.name = name || "?";
+        this.firstday = firstday || 0;
+        this.visits = visits || 0;
+
         this.order = order || null;
         this.orderdesc = orderdesc || "?";
         this.placed = placed || "Thank you.";
-        this.chat = chat || true; // Flag for if they're chattable or not, reset upon day assignment
-        this.recieve = recieve || "That's for me.";
-        this.judgings = judgings || [ // Perfect, Good, Okay, BAD
+
+        this.chat = chat || true;
+
+        this.recieve = recieve || "That's for me."; 
+        this.judgings = judgings || [
             "This is perfect! Thank you!", 
             "Thank you very much.", 
             "This looks okay... thanks.", 
@@ -23,6 +28,8 @@ class Customer { // Add first visiting day, a special order, friendship level bu
 let Chima = new Customer(
     // Calm, kind, friendly
     "Chima", 
+    1,
+    0,
     new Order("Espresso", "Mocha", [], ["Cold Foam", "Chocolate Sauce"]), 
     "I'd like a mocha espresso topped with cold foam and chocolate sauce, please!",
     "Thanks!",
@@ -39,6 +46,8 @@ let Chima = new Customer(
 let Shon = new Customer(
     // Hyper, extroverted, opposite of Devon
     "Shon",
+    1,
+    0,
     new Order("Americano", "Chai", ["Ice"]), 
     "I'd like an iced chai Americano, please!",
     "'Preciate it!",
@@ -55,6 +64,8 @@ let Shon = new Customer(
 let Devon = new Customer(
     // Calm, introverted, opposite of Shon
     "Devon",
+    2,
+    0,
     new Order("Tea", "Matcha", ["Milk"]), 
     "I'll have a matcha tea with milk, please",
     "Thank you.",

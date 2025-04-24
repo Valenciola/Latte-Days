@@ -554,6 +554,11 @@ createdrink.addEventListener("click", function() {
     baroptions.style.display = 'none';
     document.getElementById("drinkstation").style.display = 'flex';
     callTickets(document.getElementById("viewtickets"));
+    
+    document.getElementById("custodrink").style.display = "none";
+    document.getElementById("makedrink").style.display = "flex";
+
+    // Adjust description based on what's available in DrinkSelections at the moment
     buildDesc();
     if (DrinkSelections.Flavorings == "Original") {
         document.getElementById("drinkpreview").src = `Assets/Drinks/${DrinkSelections.Bases}.png`;

@@ -304,7 +304,12 @@ function dialogue(lines) {
             ticketindex = 0;
         }
 
-        readycustomers[0].chat = false;
+        if (document.getElementById("chat").disabled == true) {
+            readycustomers[0].chat = true;
+        }
+        else {
+            readycustomers[0].chat = false;
+        }
         document.getElementById("chat").disabled = true;
 
         waitingcustomers.push(readycustomers.shift()); // Shift Customers Over
@@ -821,7 +826,7 @@ function judgeDelivery(ticket, drink, customer) {
     }
 
     // Chat or No Chat
-    if (!customer.chat) {
+    if (customer.chat) {
         points += 3;
     }
 

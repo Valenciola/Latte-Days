@@ -26,7 +26,7 @@ let ticketindex = null; // Current ticket
 
 let order = [[null, null]]; // Get the order
 
-let tutorial = false;
+let tutorial = true;
 let tutorialconvo = [
     [playername, "Good morning, Miss Chima. How are you today?"],
     ["Chima", "I'm doing well, thanks! How about you?"],

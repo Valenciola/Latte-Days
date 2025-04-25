@@ -1,6 +1,7 @@
 import { Customer, Order, Interaction } from "./structures.js";
+let name = "You";
 
-/*
+/* A little help...
 class Customer { 
     // A special order, friendship level buffer (how fast you can be friends), friendship level, interactions
     constructor(name = "", firstday, visits, order = Order, orderdesc = "", placed = "", chat = Boolean, interactions = [], recieve = "", judgings = []) {
@@ -30,8 +31,8 @@ class Customer {
 }
 */
 
-// Characters
-let Chima = new Customer(
+// Characters (this is gonna fill up so fast ;-;)
+const Chima = new Customer(
     // Calm, kind, friendly
     "Chima", 
     1,
@@ -40,20 +41,25 @@ let Chima = new Customer(
     "I'd like a mocha espresso topped with cold foam and chocolate sauce, please!",
     "Thanks!",
     true, 
-    [
+    [ // Chats
         new Interaction(true, [ // Test default 1
             ["Chima", "Everything good with you?"],
-            ["You", "Yeah, everything's alright."]
+            [name, "Yeah, everything's alright."]
         ]),
         new Interaction(true, [ // Test default 2
             ["Chima", "Hey, what's up?"],
-            ["You", "Nothing, really. Hoping I'm doing my job well..."],
+            [name, "Nothing, really. Hoping I'm doing my job well..."],
             ["Chima", "I already think you're doing just fine."],
-            ["You", "That's kind of you to say."]
+            [name, "That's kind of you to say."]
+        ]),
+        new Interaction(true, [ // Test default 3
+            ["Chima", `${name}, are you doing alright? I hope you're handling things well on your own.`],
+            [name, "Yeah, I'm okay, Miss Chima! You taught me well, so things are going just fine here."],
+            ["Chima", "What a relief. In that case, I'll give you my coffee order now."]
         ])
     ],
     "All ready?",
-    [
+    [ // Judges
         "This is perfect! Thank you!", 
         "Thank you very much.", 
         "This looks okay... thanks.", 
@@ -61,7 +67,7 @@ let Chima = new Customer(
     ]
 );
 
-let Shon = new Customer(
+const Shon = new Customer(
     // Hyper, extroverted, opposite of Devon
     "Shon",
     1,
@@ -70,8 +76,13 @@ let Shon = new Customer(
     "I'd like an iced chai Americano, please!",
     "'Preciate it!",
     true, 
+    [ // Chats
+        new Interaction(true, [
+            ["Shon", "Yeah so I don't exactly exist in-game yet..."]
+        ])
+    ],
     "Oh, my drink is ready!",
-    [
+    [ // Judges
         "Yes! I've been waiting for this! Thank you so much!", 
         "This looks good! Can't wait to enjoy it. Thanks!", 
         "This seems a bit weird, but I'll take it anyway.", 
@@ -79,7 +90,7 @@ let Shon = new Customer(
     ]
 );
 
-let Devon = new Customer(
+const Devon = new Customer(
     // Calm, introverted, opposite of Shon
     "Devon",
     2,
@@ -88,8 +99,17 @@ let Devon = new Customer(
     "I'll have a matcha tea with milk, please",
     "Thank you.",
     true, 
+    [ // Chats
+        new Interaction(true, [
+            ["Devon", "Hi there, how goes it?"],
+            [name, "Things are a bit quiet around here, but otherwise good."],
+            ["Devon", "Yes. Actually, I prefer it that way."],
+            [name, "Quiet?"],
+            ["Devon", "Yeah."]
+        ])
+    ],
     "I'm here.",
-    [
+    [ // Judges
         "Just as I expected. I appreciate it.", 
         "Thank you. Have a nice day.", 
         "...This is a bit different than expected...", 

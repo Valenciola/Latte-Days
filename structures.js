@@ -29,7 +29,7 @@ class Order {
 
 class Customer { 
     // A special order, friendship level buffer (how fast you can be friends), friendship level, interactions
-    constructor(name = "", firstday, visits, order = Order, orderdesc = "", placed = "", chat = Boolean, recieve = "", judgings = []) {
+    constructor(name = "", firstday, visits, order = Order, orderdesc = "", placed = "", chat = Boolean, interactions = [], recieve = "", judgings = []) {
         this.name = name || "?"; // Character name
         this.firstday = firstday || 0; // The first day they become servable
         this.visits = visits || 0; // The amount of times they're visited
@@ -39,6 +39,11 @@ class Customer {
         this.placed = placed || "Thank you."; // What the character says after you submit the order
 
         this.chat = chat || true; // Flag for if they're chattable or not, reset upon day assignment
+        this.interactions = interactions || [
+            new Interaction(true, [
+                [name, "Is this okay?"]
+            ])
+        ];
 
         this.recieve = recieve || "That's for me."; // What they say upon a call
         this.judgings = judgings || [ // Lines upon judging order: Perfect, Good, Okay, BAD

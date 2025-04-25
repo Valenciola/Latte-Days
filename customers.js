@@ -2,19 +2,25 @@ import { Customer, Order, Interaction } from "./structures.js";
 
 /*
 class Customer { 
-    constructor(name = "", firstday, visits, order = Order, orderdesc = "", placed = "", chat = Boolean, recieve = "", judgings = []) {
-        this.name = name || "?";
-        this.firstday = firstday || 0;
-        this.visits = visits || 0;
+    // A special order, friendship level buffer (how fast you can be friends), friendship level, interactions
+    constructor(name = "", firstday, visits, order = Order, orderdesc = "", placed = "", chat = Boolean, interactions = [], recieve = "", judgings = []) {
+        this.name = name || "?"; // Character name
+        this.firstday = firstday || 0; // The first day they become servable
+        this.visits = visits || 0; // The amount of times they're visited
 
-        this.order = order || null;
-        this.orderdesc = orderdesc || "?";
-        this.placed = placed || "Thank you.";
+        this.order = order || null; // Character's default order
+        this.orderdesc = orderdesc || "?"; // The way the character says the order
+        this.placed = placed || "Thank you."; // What the character says after you submit the order
 
-        this.chat = chat || true;
+        this.chat = chat || true; // Flag for if they're chattable or not, reset upon day assignment
+        this.interactions = interactions || [
+            new Interaction(true, [
+                [name, "Is this okay?"]
+            ])
+        ];
 
-        this.recieve = recieve || "That's for me."; 
-        this.judgings = judgings || [
+        this.recieve = recieve || "That's for me."; // What they say upon a call
+        this.judgings = judgings || [ // Lines upon judging order: Perfect, Good, Okay, BAD
             "This is perfect! Thank you!", 
             "Thank you very much.", 
             "This looks okay... thanks.", 
@@ -34,6 +40,18 @@ let Chima = new Customer(
     "I'd like a mocha espresso topped with cold foam and chocolate sauce, please!",
     "Thanks!",
     true, 
+    [
+        new Interaction(true, [ // Test default 1
+            ["Chima", "Everything good with you?"],
+            ["You", "Yeah, everything's alright."]
+        ]),
+        new Interaction(true, [ // Test default 2
+            ["Chima", "Hey, what's up?"],
+            ["You", "Nothing, really. Hoping I'm doing my job well..."],
+            ["Chima", "I already think you're doing just fine."],
+            ["You", "That's kind of you to say."]
+        ])
+    ],
     "All ready?",
     [
         "This is perfect! Thank you!", 

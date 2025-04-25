@@ -26,7 +26,7 @@ let ticketindex = null; // Current ticket
 
 let order = [[null, null]]; // Get the order
 
-let tutorial = true;
+let tutorial = false;
 let tutorialconvo = [
     [playername, "Good morning, Miss Chima. How are you today?"],
     ["Chima", "I'm doing well, thanks! How about you?"],
@@ -67,6 +67,7 @@ document.getElementById("newgame").addEventListener("click", function() { // Sta
         else {
             // Regular Run
             readycustomers.push(canbeserved[0]);
+            updateFront();
         }
         console.log(readycustomers[0]);
     }, 0.5 * 1000);
@@ -327,6 +328,21 @@ function dialogue(lines) {
     displayText(); // Start displaying the first line
 }
 
+function pickChat(customer) { // Taking conditional statements into account, decide what each character should say
+    let possibles = [];
+    let inquestion = customer.interactions;
+
+    for (let i = 0; i < inquestion.length; i++) {
+        if (inquestion[i].conditional) {
+            possibles.push(inquestion[i].dialogue);
+        }
+    }
+
+    //console.log(possibles);
+    let select = Math.floor(Math.random() * possibles.length);
+    return possibles[select];
+}
+
 startchat.addEventListener("click", function() {
     // Upon click, initiate chat
     chatbox.style.display = "flex";
@@ -335,6 +351,11 @@ startchat.addEventListener("click", function() {
         dialogue(tutorialconvo);
         startchat.style.backgroundColor = "rgb(243, 180, 63)";
     }
+    else {
+        dialogue(pickChat(readycustomers[0]));
+    }
+    startchat.disabled = true;
+    readycustomers[0].chat = false;
 });
 
 // Take Order

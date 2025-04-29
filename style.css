@@ -393,6 +393,8 @@ button:disabled {
     font-family: 'Satisfy', cursive;
     background-color: rgb(243, 180, 63);
     color: white;
+
+    width: 50%;
 }
 
 #displaydrink {

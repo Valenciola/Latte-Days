@@ -53,6 +53,8 @@ function transition(speed, hold, source, destination) {
     }, speed * 1000);
 }
 
+// New Day
+
 // Main Menu
 document.getElementById("credits").addEventListener("click", function() {
     alert("Not available yet!");
@@ -90,7 +92,7 @@ function updateFront() {
         else {
             let currcust = readycustomers[0];
             console.log("There's still someone!");
-            document.getElementById("customer").src = `Assets/Characters/${currcust.name}-Static.png`
+            document.getElementById("customer").src = `Assets/Characters/${currcust.name}-Static.png`;
     
             if (currcust.chat == true) {
                 startchat.disabled = false;
@@ -805,6 +807,9 @@ function pairOrder(ticket, drink) {
     chatbox.style.display = "flex";
     options.style.display = "none";
     dialogue(confirmlines);
+    ticustomer.visits++;
+    console.log(ticustomer);
+
     return([ticket, drink, ticustomer]);
 }
 

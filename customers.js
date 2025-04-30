@@ -79,6 +79,10 @@ const Shon = new Customer(
     [ // Chats
         new Interaction(true, [
             ["Shon", "Yeah so I don't exactly exist in-game yet..."]
+        ]),
+        new Interaction(true, [
+            [name, "How's it going?"],
+            ["Shon", "It would be better if I wasn't a disembodied voice..."]
         ])
     ],
     "Oh, my drink is ready!",
@@ -106,6 +110,12 @@ const Devon = new Customer(
             ["Devon", "Yes. Actually, I prefer it that way."],
             [name, "Quiet?"],
             ["Devon", "Yeah."]
+        ]),
+        new Interaction(true, [
+            ["Devon", "Hello."],
+            [name, "Hi! How's it going?"],
+            ["Devon", "Things are good for now, but it's clear that there's some work to be done around here..."],
+            [name, "Pardon?"]
         ])
     ],
     "I'm here.",

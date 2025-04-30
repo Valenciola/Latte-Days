@@ -36,7 +36,7 @@ let tutorialconvo = [
 let tcheckpoint = [true, true, true, true];
 
 let days = 0; // Number of days passed
-let allowedvisits = 2; // Number of customers that can come each day
+let allowedvisits = 1; // Number of customers that can come each day
 let performance = 0; // Average performance per day (max points 17)
 
 // Transition
@@ -55,14 +55,19 @@ function transition(speed, hold, source, destination) {
     }, speed * 1000);
 }
 
-// New Day
+// Day Cycle
 function startDay() {
     days++;
+    performance = 0;
+
     let startscreen = document.getElementById("newday");
     startscreen.innerHTML = `<h1><u>~ Day ${days} ~</u></h1>`;
 
     if (document.getElementById("main-menu").style.display != 'none') {
         transition(0.5, 2, document.getElementById("main-menu"), startscreen);
+    }
+    else {
+        transition(0.5, 2, document.getElementById("endday"), startscreen);
     }
 
     function randomCusto(customers, numcust) { // Random Select Customers
@@ -73,6 +78,7 @@ function startDay() {
             [copycus[i], copycus[j]] = [copycus[j], copycus[i]]; // Swap elements
         }
 
+        console.log(copycus);
         return copycus.slice(0, numcust);
 
     }
@@ -81,6 +87,9 @@ function startDay() {
         if (!tutorial) {
             // Regular Run
             readycustomers = randomCusto(canbeserved, allowedvisits);
+            for (let i = 0; i < readycustomers.length; i++) {
+                readycustomers[i].chat = true;
+            }
             updateFront();
         }
     }, 0.5 * 1000);
@@ -92,9 +101,22 @@ function startDay() {
             Tutorial();
         }
 
-        console.log(readycustomers);
+        console.log("Lineup", readycustomers);
     }, 3 * 1000);
 }
+
+function endDay() {
+    let closeout = document.getElementById("endday");
+
+    transition(0.5, 2, document.getElementById("pickup"), closeout);
+    document.getElementById("custserved").textContent = `Customers Served: ${allowedvisits}`;
+    document.getElementById("cusperform").textContent = `Performance: ${Math.round((performance / (17 * allowedvisits)) * 100)}%`;
+}
+
+let nextday = document.getElementById("afterday");
+nextday.addEventListener("click", function() {
+    startDay();
+});
 
 // Main Menu
 document.getElementById("credits").addEventListener("click", function() {
@@ -122,6 +144,7 @@ function updateFront() {
         else {
             let currcust = readycustomers[0];
             console.log("There's still someone!");
+            document.getElementById("customer").style.display = '';
             document.getElementById("customer").src = `Assets/Characters/${currcust.name}-Static.png`;
     
             if (currcust.chat == true) {
@@ -223,7 +246,7 @@ function dialogue(lines) {
                 if (tutorial) {
                     feedback.push(["Chima", "Anyway, that's about all you need to know to work here at Latte Days!"]);
                     feedback.push(["Chima", "Please do your absolute best to satisfy the rest of the customers. I really believe you can do it!"]);
-                    //readycustomers.push(canbeserved[0]); // The "Try It On Your Own" customer
+                    readycustomers.push(canbeserved[1]); // The "Try It On Your Own" customer
                     feedback.push([playername, "Thank you!"]);
                     feedback.push(["Chima", "I'll be heading out now, okay? You've got the customers for these next few days!"]);
                     feedback.push([playername, "I'll do my best."]);
@@ -241,11 +264,15 @@ function dialogue(lines) {
             }
             else if (judgeflag) { // Handle judging an order and ticket
                 judgeflag = false;
-                transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("pickup"));
-                console.log(waitingcustomers, readycustomers);
                 if (waitingcustomers.length == 0 && readycustomers.length == 0) {
                     console.log("No more customers!");
+                    endDay();
                 }
+                else {
+                    transition(0.5, 1, document.getElementById("pickup"),  document.getElementById("pickup"));
+                    console.log(waitingcustomers, readycustomers);
+                }
+
                 setTimeout(function() {
                     document.getElementById("delcustomer").style.display = 'none';
                     document.getElementById("deloptions").style.display = 'flex';

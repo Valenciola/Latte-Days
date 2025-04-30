@@ -26,7 +26,7 @@ let ticketindex = null; // Current ticket
 
 let order = [[null, null]]; // Get the order
 
-let tutorial = false;
+let tutorial = true;
 let tutorialconvo = [
     [playername, "Good morning, Miss Chima. How are you today?"],
     ["Chima", "I'm doing well, thanks! How about you?"],
@@ -35,7 +35,9 @@ let tutorialconvo = [
 ];
 let tcheckpoint = [true, true, true, true];
 
-let days = 0;
+let days = 0; // Number of days passed
+let allowedvisits = 2; // Number of customers that can come each day
+let performance = 0; // Average performance per day (max points 17)
 
 // Transition
 let blackscreen = document.getElementById("transition");
@@ -54,6 +56,45 @@ function transition(speed, hold, source, destination) {
 }
 
 // New Day
+function startDay() {
+    days++;
+    let startscreen = document.getElementById("newday");
+    startscreen.innerHTML = `<h1><u>~ Day ${days} ~</u></h1>`;
+
+    if (document.getElementById("main-menu").style.display != 'none') {
+        transition(0.5, 2, document.getElementById("main-menu"), startscreen);
+    }
+
+    function randomCusto(customers, numcust) { // Random Select Customers
+        let copycus = [...customers];
+
+        for (let i = copycus.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [copycus[i], copycus[j]] = [copycus[j], copycus[i]]; // Swap elements
+        }
+
+        return copycus.slice(0, numcust);
+
+    }
+
+    setTimeout(function() {
+        if (!tutorial) {
+            // Regular Run
+            readycustomers = randomCusto(canbeserved, allowedvisits);
+            updateFront();
+        }
+    }, 0.5 * 1000);
+
+    setTimeout(function() {
+        transition(0.5, 2, startscreen, document.getElementById("cafe"));
+
+        if (tutorial) {
+            Tutorial();
+        }
+
+        console.log(readycustomers);
+    }, 3 * 1000);
+}
 
 // Main Menu
 document.getElementById("credits").addEventListener("click", function() {
@@ -61,18 +102,7 @@ document.getElementById("credits").addEventListener("click", function() {
 });
 
 document.getElementById("newgame").addEventListener("click", function() { // Start new game
-    transition(0.5, 1, document.getElementById("main-menu"),  document.getElementById("cafe"));
-    setTimeout(function() {
-        if (tutorial) {
-            Tutorial();
-        }
-        else {
-            // Regular Run
-            readycustomers.push(canbeserved[0]);
-            updateFront();
-        }
-        console.log(readycustomers[0]);
-    }, 0.5 * 1000);
+    startDay();
 });
 
 // Cafe UI
@@ -104,6 +134,8 @@ function updateFront() {
             if (tutorial) {
                 startchat.disabled = true;
             }
+
+            startpos.disabled = false;
         }
     }, 0.5 * 1000);
 }
@@ -170,6 +202,7 @@ function dialogue(lines) {
                 //console.log(`Assets/Characters/${lines[1][0]}-Static.png`);
                 let score = judgeDelivery(focuscustomer[0], focuscustomer[1], focuscustomer[2])
                 focuscustomer.push(score);
+                performance += score; // Add score to performance total
                 judgeflag = true;
 
                 let feedback = [[focuscustomer[2].name, null]];
@@ -535,12 +568,8 @@ let callTickets = function(viewtickets) {
         viewtickets.style.alignItems = "";
         viewtickets.innerHTML = "";
 
-        let orderhead = document.createElement("h2");
-        orderhead.textContent = `Order for ${customername}`;
-        viewtickets.appendChild(orderhead);
-
         // Display from tickets
-        const firstTicket = opentickets[0];
+        const firstTicket = opentickets[ticketindex];
         const ticketDetails = document.createElement("ul");
         Object.keys(firstTicket).forEach(key => {
             if (Array.isArray(firstTicket[key]) && firstTicket[key].length > 0) {
@@ -555,6 +584,10 @@ let callTickets = function(viewtickets) {
                 ticketDetails.appendChild(listItem);
             }
         });
+
+        let orderhead = document.createElement("h2");
+        orderhead.textContent = `Order for ${firstTicket.customerName}`;
+        viewtickets.appendChild(orderhead);
 
         viewtickets.appendChild(ticketDetails);
     }
@@ -785,6 +818,8 @@ function pairOrder(ticket, drink) {
     document.getElementById("delivery").style.display = 'none';
 
     let custoindex = waitingcustomers.findIndex(customer => customer.name === ticket.customerName);
+
+    drinkindex = drinks.findIndex(drink => drink !== null);
     drinks[drinkindex] = null;
     let nonNullDrinks = drinks.filter(drink => drink !== null);
     for (let i = 0; i < drinks.length; i++) {
@@ -794,7 +829,9 @@ function pairOrder(ticket, drink) {
     waitingcustomers.splice(custoindex, 1);
     opentickets.splice(ticketindex, 1);
     ticketindex = opentickets.length > 0 ? 0 : null;
+
     drinkindex = drinks.findIndex(drink => drink !== null);
+    if (drinkindex === -1) drinkindex = null;
 
     callTickets(document.getElementById("showtickets"));
     callDrinks(document.getElementById("showdrinks"));

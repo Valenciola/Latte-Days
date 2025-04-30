@@ -117,6 +117,6 @@ const Devon = new Customer(
     ]
 );
 
-let canbeserved = [Chima]; // Deal with this variable and make it update dynamically depending on everyone's first day
+let canbeserved = [Chima, Shon, Devon]; // Deal with this variable and make it update dynamically depending on everyone's first day
 
 export {canbeserved};

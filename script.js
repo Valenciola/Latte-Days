@@ -36,7 +36,7 @@ let tutorialconvo = [
 let tcheckpoint = [true, true, true, true];
 
 let days = 0; // Number of days passed
-let allowedvisits = 1; // Number of customers that can come each day
+let allowedvisits = 2; // Number of customers that can come each day
 let performance = 0; // Average performance per day (max points 17)
 
 // Transition
@@ -209,8 +209,7 @@ function dialogue(lines) {
             }
             addCharacter();
         }
-        else {
-            // Dialogue is finished; reset
+        else { // Dialogue is finished; reset
             button.removeEventListener('click', buttonHandle);
             chatbox.style.display = "none";
             options.style.display = "flex";
@@ -276,10 +275,15 @@ function dialogue(lines) {
                 setTimeout(function() {
                     document.getElementById("delcustomer").style.display = 'none';
                     document.getElementById("deloptions").style.display = 'flex';
-                    if (!tutorial && tcheckpoint.includes(false)) {
+                    updateFront();
+
+                    /*
+                    if (!tutorial && tcheckpoint.includes(false)) { // Cut off the game (removable)
                         document.getElementById("fence").style.display = 'flex';
                         document.getElementById("fence").style.opacity = "1";
                     }
+                    */
+
                 }, 0.5 * 1000);
             }
 
@@ -320,7 +324,7 @@ function dialogue(lines) {
                     document.getElementById("todrink").disabled = false;
 
                     let sum = [
-                        ["Chima", "Good! Now, head over to the drink station to your right. Follow the directions on the machine to create the drink on the ticket you just wrote."],
+                        ["Chima", "Now, head over to the drink station to your right. Follow the directions on the machine to create the drink on the ticket you just wrote."],
                         ["Chima", "After you're done, the delivery station will be all the way to your left. Call me over with the ticket you wrote and we'll see how well you did!"],
                         [playername, "Understood! I'll get right to it!"],
                         ["Tip", "Use the RIGHT ARROW to get to the drink machine and make a new drink. Then, click the LEFT ARROW to go back to the counter, and then press the LEFT ARROW again to go to the delivery station."],
@@ -553,6 +557,7 @@ startpos.addEventListener("click", function() {
     document.getElementById("ticketsummary").innerHTML = '';
     posflag = true;
     customername = readycustomers[0].name;
+    writeUp();
     if (tutorial) {
         order = [
             ["Chima", "I'll have a regular latte."],

@@ -127,6 +127,32 @@ document.getElementById("newgame").addEventListener("click", function() { // Sta
     startDay();
 });
 
+let tutotog = document.getElementById("togtutorial");
+tutotog.addEventListener("change", function() { // Toggle tutorial
+    tutorial = tutotog.checked;
+    //console.log(tutorial);
+});
+
+document.getElementById("settings").addEventListener("click", function() { // Display settings
+    document.getElementById("settingsmenu").style.display = 'flex';
+
+    document.getElementById("titlecard").style.display = 'none';
+    document.getElementById("newgame").style.display = 'none';
+    document.getElementById("credits").style.display = 'none';
+    document.getElementById("settings").style.display = 'none';
+
+    tutotog.checked = tutorial;
+
+});
+document.getElementById("outofsettings").addEventListener("click", function() { // Hide settings
+    document.getElementById("settingsmenu").style.display = 'none';
+
+    document.getElementById("titlecard").style.display = '';
+    document.getElementById("newgame").style.display = '';
+    document.getElementById("credits").style.display = '';
+    document.getElementById("settings").style.display = '';
+});
+
 // Cafe UI
 let options = document.getElementById("options"); // Overarching options div
 let startchat = document.getElementById("chat"); // Chat button

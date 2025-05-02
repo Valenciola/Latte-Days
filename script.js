@@ -109,6 +109,7 @@ function endDay() {
     let closeout = document.getElementById("endday");
 
     transition(0.5, 2, document.getElementById("pickup"), closeout);
+    document.getElementById("endhead").textContent = `End of Day ${days}`;
     document.getElementById("custserved").textContent = `Customers Served: ${allowedvisits}`;
     document.getElementById("cusperform").textContent = `Performance: ${Math.round((performance / (17 * allowedvisits)) * 100)}%`;
 }

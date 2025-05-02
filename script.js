@@ -1,5 +1,5 @@
 // Overarching
-import { canbeserved } from "./customers.js";
+import { canbeserved, updateList } from "./customers.js";
 import { Ticket, Drink, Order } from "./structures.js";
 
 let playername = "You"; // RETURN to this and change to base on main menu selection
@@ -59,6 +59,7 @@ function transition(speed, hold, source, destination) {
 function startDay() {
     days++;
     performance = 0;
+    updateList();
 
     let startscreen = document.getElementById("newday");
     startscreen.innerHTML = `<h1><u>~ Day ${days} ~</u></h1>`;

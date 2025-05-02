@@ -127,6 +127,20 @@ const Devon = new Customer(
     ]
 );
 
-let canbeserved = [Chima, Shon, Devon]; // Deal with this variable and make it update dynamically depending on everyone's first day
+const masterList = [Chima, Shon, Devon];
+let canbeserved = []; // Deal with this variable and make it update dynamically depending on everyone's first day
+let day = 0;
 
-export {canbeserved};
+function updateList() { // Update servable characters based on what day it is
+    canbeserved.length = 0;
+    day++;
+    //console.log(day);
+    for (let i = 0; i < masterList.length; i++) {
+        if (masterList[i].firstday <= day) {
+            canbeserved.push(masterList[i]);
+        }
+    }
+    //console.log("Servables", canbeserved);
+};
+
+export {canbeserved, updateList};

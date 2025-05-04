@@ -56,11 +56,16 @@ class Customer {
 }
 
 class Interaction { // Each character should keep an array of these (to be sifted at the chat button)
-    constructor(conditional = Boolean, dialogue = []) {
-        this.conditional = conditional || false;
+    constructor(conditional = (customer, masterlist) => true, dialogue = []) {
+        this.conditional = conditional;
         this.dialogue = dialogue || [
             ["Name", "Empty"]
         ];
+    }
+
+    Validity(customer, othercust = []) {
+        //console.log(this.conditional(customer, othercust));
+        return this.conditional(customer, othercust);
     }
 }
 

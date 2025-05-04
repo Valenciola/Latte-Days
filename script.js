@@ -422,12 +422,12 @@ function dialogue(lines) {
     displayText(); // Start displaying the first line
 }
 
-function pickChat(customer) { // Taking conditional statements into account, decide what each character should say
+function pickChat(customer, customers) { // Taking conditional statements into account, decide what each character should say
     let possibles = [];
     let inquestion = customer.interactions;
 
     for (let i = 0; i < inquestion.length; i++) {
-        if (inquestion[i].conditional) {
+        if (inquestion[i].Validity(customer, customers)) {
             possibles.push(inquestion[i].dialogue);
         }
     }
@@ -446,7 +446,7 @@ startchat.addEventListener("click", function() {
         startchat.style.backgroundColor = "rgb(243, 180, 63)";
     }
     else {
-        dialogue(pickChat(readycustomers[0]));
+        dialogue(pickChat(readycustomers[0], canbeserved));
     }
     startchat.disabled = true;
     readycustomers[0].chat = false;
